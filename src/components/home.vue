@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
-    <div class="popularTVWrapper">
-      <div class="showContainer" v-if="popularTV" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
-        <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/w500' + show.backdrop_path">
+    <div class="popularTVWrapper" v-if="popularTV">
+      <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
+        <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
         <div class="showText">
           <div class="showName">{{show.name}}</div>
         </div>
@@ -79,9 +79,12 @@ export default {
 .showContainer {
   position: relative;
   margin: 15px;
+  height: 250px;
+  width: 425px;
 }
 
 .tvImg {
+  background: #111111;
   height: 100%;
   width: 100%;
 }

@@ -1,15 +1,16 @@
 <template>
   <div class="wrapper">
-    <div class="showOverview" v-if="show">
-      <div>{{show.name}}</div>
-      <div>{{show.overview}}</div>
-    </div>
-    <div class="seasons" v-if="numSeasons" v-on:click="toggleList($event)"> 
-      <div class="seasonsTitle list-item">Seasons</div>
-      <div class="eachSeason hidden">
+    <img class="showImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
+    <div class="showDetails" v-if="show">
+      <div class="showName">{{show.name}}</div>
+      <div class="showOverview">{{show.overview}}</div>
+      <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
+      <div class="eachSeason">
         <div class="season" v-for="season in seasons">
           <div class="seasonTitle list-item">Season {{season.season_number}}</div>
+          <img class="seasonImg" v-bind:src="'https://image.tmdb.org/t/p/original' + season.poster_path">
           <div class="eachSeasonsEpisodes hidden">
+            <div class="seasonTitle">Season {{season.season_number}}</div>
             <div class="episode list-item" v-for="episode in season.episodes">
               {{episode.name}} ({{episode.season_number}}x{{episode.episode_number | checkIfOverTen}})
               <div class="overview hidden">
@@ -19,6 +20,8 @@
           </div>
         </div>
       </div>
+      <div class="overlayBackground"></div>
+    </div>
     </div>
   </div>
 </template>
@@ -116,19 +119,38 @@ export default {
     },
     toggleList(event) {
       // on click toggle visibilty of list children
-      console.log(event.target)
+      //console.log(event.target)
       var targetClass = event.target.classList[0];
 
       if(targetClass == "seasonsTitle") {
         var toggleElem = $(".eachSeason");
-      } else if(targetClass == "seasonTitle") {
-        var toggleElem = event.target.nextElementSibling;
+      } else if(targetClass == "seasonImg") {
+        // create overlay of season with eppisodes listed
+        var overlayElem = event.target.nextElementSibling;
       } else if(targetClass == "episode") {
         var toggleElem = event.target.children[0];
+      } else if(targetClass == "overlayBackground") {
+          // if user clicks on the background while the overlay
+          // is active and the background is dimmed
+          // exit the overlay and remove the dim
+          $(".eachSeasonsEpisodes").each(function() {
+            console.log('testing')
+            if($(this).hasClass("overlay")) {
+              $(this).removeClass("overlay");
+            }
+            if($(".overlayBackground").hasClass("dim")) {
+              $(".overlayBackground").removeClass("dim");
+            }
+          });
       }
       
-      
-      $(toggleElem).toggleClass("hidden");
+      // check if toggle elem has been set, not all clicks set it
+      if(typeof toggleElem != 'undefined') {
+        $(toggleElem).toggleClass("hidden");
+      } else if(typeof overlayElem != 'undefined') {
+        $(overlayElem).toggleClass("overlay");
+        $(".overlayBackground").toggleClass("dim");
+      }
     },
   }
 }
@@ -146,15 +168,53 @@ export default {
   flex-direction: column;
 }
 
+.showImg {
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  max-height: 100%;
+}
+
+.showName {
+
+}
+
 .showOverview {
-  height: 50%;
   width: 50%;
+}
+
+.showDetails {
+  height: 100%;
+  width: 100%;
   background: aqua;
+  margin-top: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.eachSeason {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .season {
   background: gray;
   margin-bottom: 10px;
+}
+
+.seasonTitle {
+  width: 100%;
+  text-align: center;
+}
+
+.seasonImg {
+  height: 200px;
+  width: 150px;
 }
 
 .episode {
@@ -174,6 +234,33 @@ export default {
   cursor: auto;
   background: lightgreen;
   margin-bottom: 10px;
+}
+
+.overlay {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: red;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 500px;
+}
+
+.overlayBackground {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -10;
+}
+
+.dim {
+  background: #111111;
+  opacity: 0.9;
+  z-index: 0;
 }
 
 </style>
