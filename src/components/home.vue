@@ -1,12 +1,13 @@
 <template>
   <div class="wrapper">
     <div class="popularTVWrapper">
-      <router-link to="/show" class="showContainer" v-if="popularTV" v-for="show in popularTV">
+      <div class="showContainer" v-if="popularTV" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/w500' + show.backdrop_path">
         <div class="showText">
           <div class="showName">{{show.name}}</div>
         </div>
-      </router-link>
+        <div class="clickZone"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +39,26 @@ export default {
       .catch(function (error) {
         console.log(error);
       });
-    }
+    },
+    goToShowDetails(event) {
+      var self = this;
+      
+      // find show id
+      // currently doing this by getting the show name from the DOM element
+      // then using the name to loop through all the shows in data and find matching to get ID
+      var clickedShowname = event.target.previousElementSibling.children[0].innerHTML;
+      for(var i = 0; i < self.popularTV.length; i++) {
+        if(self.popularTV[i].name == clickedShowname) {
+          var selectedShowID = self.popularTV[i].id;
+        }
+      }
+      //clickedShowname = clickedShowname.replace(/\s+/g, '');
+      self.$router.push({
+        name: 'show', 
+        query: {name: clickedShowname}, 
+        params: {id: selectedShowID}
+      });
+    },
   }
 }
 </script>
@@ -78,6 +98,13 @@ export default {
 
 .showName {
   color: #dddddd;
+}
+
+.clickZone {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  width: 100%;
 }
 
 </style>
