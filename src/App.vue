@@ -19,5 +19,6 @@ html, body {
 #app {
   height: 100%;
   width: 100%;
+  font-family: 'Work Sans', sans-serif;
 }
 </style>

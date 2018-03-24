@@ -1,7 +1,16 @@
 <template>
   <div class="wrapper">
-    <div class="popularTVWrapper" v-if="popularTV">
+    <div class="popularContainer container" v-if="popularTV"> Popular
       <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
+        <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
+        <div class="showText">
+          <div class="showName">{{show.name}}</div>
+        </div>
+        <div class="clickZone"></div>
+      </div>
+    </div>
+    <div class="airingTodayContainer container" v-if="airingToday"> Airing Today
+      <div class="showContainer" v-for="show in airingToday" v-on:click="goToShowDetails($event)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
         <div class="showText">
           <div class="showName">{{show.name}}</div>
@@ -20,10 +29,12 @@ export default {
   data () {
     return {
       popularTV: null,
+      airingToday: null,
     }
   },
   created() {
     this.requestPopularTV();
+    this.requestAiringToday();
   },
   methods: {
     requestPopularTV() {
@@ -34,7 +45,20 @@ export default {
         //url:'https://api.themoviedb.org/3/tv/popular?api_key=75234636e15f7c2463efbf69fd35b291',
       })
       .then(function(response) {
-        self.popularTV = response.data.results;
+        self.popularTV = response.data.results.slice(0,5);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    requestAiringToday() {
+      var self = this;
+      axios({
+        method:'get',
+        url:'http://api.themoviedb.org/3/tv/airing_today?api_key=75234636e15f7c2463efbf69fd35b291',
+      })
+      .then(function(response) {
+        self.airingToday = response.data.results.slice(0,5);
       })
       .catch(function (error) {
         console.log(error);
@@ -71,9 +95,9 @@ export default {
   width: 100%;
 }
 
-.popularTVWrapper {
+.container {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
 .showContainer {
