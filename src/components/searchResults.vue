@@ -98,6 +98,11 @@ export default {
   align-items: center;
   height: 278px;
   width: 185px;
+  cursor: pointer;
+}
+
+.result:hover {
+  opacity: 0.5;
 }
 
 .showPosterImg {

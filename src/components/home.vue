@@ -11,7 +11,8 @@
         <div class="clickZone"></div>
       </div>
     </div>
-    <div class="title">Airing Today</div>
+    <div class="morePopular">More</div>
+    <div class="airingTodayTitle title">Airing Today</div>
     <div class="airingTodayContainer container" v-if="airingToday">
       <div class="showContainer" v-for="show in airingToday" v-on:click="goToShowDetails($event)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
@@ -120,6 +121,18 @@ export default {
   cursor: pointer;
 }
 
+.showContainer:hover {
+  opacity: 0.5;
+}
+
+.airingTodayContainer {
+}
+
+.title {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 .tvImg {
   background: #111111;
   height: 100%;
@@ -148,8 +161,25 @@ export default {
 }
 
 .title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
+}
+
+.morePopular {
+  width: 125px;
+  height: 30px;
+  background: rgba(43, 43, 43, 0.9);
+  text-align: center;
+  font-size: 24px;
+  line-height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 1s all;
+}
+
+.morePopular:hover {
+  opacity: 0.7;
+  width: 175px;
 }
 
 </style>

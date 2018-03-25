@@ -1,7 +1,7 @@
 <template>
   <div class="searchWrapper">
     <div class="searchBarContainer">
-        <div class="searchInput" contenteditable="true" spellcheck="false"></div>
+        <div class="searchInput" contenteditable="true" spellcheck="false" v-on:keyup="checkKey"></div>
         <div class="searchSubmitButton" v-on:click="clickedSearch()">Search</div>
     </div>
   </div>
@@ -37,8 +37,24 @@ export default {
         });
       }
     },
+    checkKey(event) {
+      var key = event.keyCode;
+      if(key == 13) {
+        event.preventDefault();
+        console.log('clicked enter');
+        return false;
+      }
+    },
   }
 }
+
+$(document).on('keypress', '.searchInput', function(e){
+  if(e.which == 13) {
+    $(".searchSubmitButton").trigger("click"); 
+  }
+  return e.which != 13;
+}); 
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -65,6 +81,7 @@ export default {
     line-height: 30px;
     padding-left: 5px;
     border-radius: 7px;
+    overflow: hidden;
 }
 
 .searchSubmitButton {
