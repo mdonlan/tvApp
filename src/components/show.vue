@@ -272,7 +272,7 @@ export default {
 .showImg {
   width: 100%;
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   max-height: 100%;
 }
 
@@ -299,6 +299,7 @@ export default {
   flex-direction: column;
   align-items: center;
   color: #dddddd;
+  z-index: 1;
 }
 
 .showDetailsTop {

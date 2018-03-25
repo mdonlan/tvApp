@@ -4,8 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import search from './components/search'
 
 Vue.config.productionTip = false
+
+Vue.component('search', search);
 
 /* eslint-disable no-new */
 new Vue({

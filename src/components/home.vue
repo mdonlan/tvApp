@@ -1,6 +1,8 @@
 <template>
   <div class="wrapper">
-    <div class="popularContainer container" v-if="popularTV"> Popular
+    <search></search>
+    <div class="title">Popular</div> 
+    <div class="popularContainer container" v-if="popularTV">
       <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
         <div class="showText">
@@ -9,7 +11,8 @@
         <div class="clickZone"></div>
       </div>
     </div>
-    <div class="airingTodayContainer container" v-if="airingToday"> Airing Today
+    <div class="title">Airing Today</div>
+    <div class="airingTodayContainer container" v-if="airingToday">
       <div class="showContainer" v-for="show in airingToday" v-on:click="goToShowDetails($event)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
         <div class="showText">
@@ -23,6 +26,7 @@
 
 <script>
 import axios from 'axios';
+import $ from 'jquery';
 
 export default {
   name: 'home',
@@ -45,7 +49,8 @@ export default {
         //url:'https://api.themoviedb.org/3/tv/popular?api_key=75234636e15f7c2463efbf69fd35b291',
       })
       .then(function(response) {
-        self.popularTV = response.data.results.slice(0,5);
+        // only return the first 9 shows
+        self.popularTV = response.data.results.slice(0,9);
       })
       .catch(function (error) {
         console.log(error);
@@ -58,7 +63,8 @@ export default {
         url:'http://api.themoviedb.org/3/tv/airing_today?api_key=75234636e15f7c2463efbf69fd35b291',
       })
       .then(function(response) {
-        self.airingToday = response.data.results.slice(0,5);
+        // only return the first 9 shows
+        self.airingToday = response.data.results.slice(0,9);
       })
       .catch(function (error) {
         console.log(error);
@@ -91,20 +97,27 @@ export default {
 <style scoped>
 
 .wrapper {
-  height: 100%;
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #373837;
+  color: #dddddd;
 }
 
 .container {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 75%;
 }
 
 .showContainer {
   position: relative;
-  margin: 15px;
-  height: 250px;
-  width: 425px;
+  height: 33.3%;
+  width: 30%;
+  cursor: pointer;
 }
 
 .tvImg {
@@ -132,6 +145,11 @@ export default {
   top: 0px;
   height: 100%;
   width: 100%;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 </style>
