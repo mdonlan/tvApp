@@ -69,6 +69,8 @@
           </div>
         </div>
       </div>
+
+      <div class="addToFavoritesButton" v-on:click="addToFavorites">Add to favorites</div>
       
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
         <div class="season"v-for="season in seasons">
@@ -100,6 +102,7 @@
 <script>
 import axios from 'axios';
 import $ from 'jquery';
+import firebase from 'firebase';
 
 export default {
   name: 'show',
@@ -109,9 +112,12 @@ export default {
       showID: null,
       numSeasons: null,
       seasons: null,
+      loggedIn: false,
+      userID: '',
     }
   },
   created() {
+    this.checkLoggedIn();
     this.checkForShowID();
   },
   filters: {
@@ -126,6 +132,15 @@ export default {
     },
   },
   methods: {
+    checkLoggedIn() {
+      var self = this;
+      if(firebase.auth().currentUser.uid) {
+        // if user is logged in set logged in to true
+        // if loggedIn equals true then show add to favorites button
+        self.loggedIn = true;
+        self.userID = firebase.auth().currentUser.uid;
+      }
+    },
     checkForShowID() {
       var self = this;
 
@@ -252,6 +267,47 @@ export default {
         $(overlayElem).toggleClass("overlay");
         $(".overlayBackground").toggleClass("dim");
       }
+    },
+    addToFavorites() { 
+      var self = this;
+      var database = firebase.database();
+      var ref = database.ref('users/' + self.userID);
+      var refFavorites = database.ref('users/' + self.userID + "/favorites");
+
+      // check db to see if show is already favorited
+      /*
+      ref.on('value', function(snapshot) {
+        snapshot(function(childSnapshot) {
+          var childData = childSnapshot.val();
+          if(typeof childData == 'object') {
+            $.each(childData, function(key, value) {
+              console.log(value.showName);
+            }); 
+          }
+        });
+      });
+      */
+      refFavorites.on("child_added", function(snapshot, prevChildKey) {
+        var favData = snapshot.val();
+        $.each(favData, function(key, value) {
+              console.log(favData.showName);
+            }); 
+      });
+
+      database.ref('users/' + self.userID + '/favorites').push({
+          "showName": self.show.name
+      });
+
+      var favoritesLength = firebase.auth().currentUser;
+      
+      /*
+      database.ref('users/').once('value').then(function(snapshot) {
+        snapshot.forEach(function(userSnapshot) {
+          var username = userSnapshot.val();
+          console.log(username);
+        });
+      });
+      */
     },
   }
 }
@@ -428,6 +484,10 @@ export default {
 
 .showDetailsItemRight {
   text-align: end;
+}
+
+.addToFavoritesButton {
+  border: 1px solid #dddddd;
 }
 
 </style>

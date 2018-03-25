@@ -1,7 +1,7 @@
 <template>
   <div class="searchWrapper">
     <div class="searchBarContainer">
-        <div class="searchInput" contenteditable="true" spellcheck="false" v-on:keyup="checkKey"></div>
+        <div class="searchInput" contenteditable="true" spellcheck="false" v-on:keyup="checkKey" placeholder="search..."></div>
         <div class="searchSubmitButton" v-on:click="clickedSearch()">Search</div>
     </div>
   </div>
@@ -82,12 +82,24 @@ $(document).on('keypress', '.searchInput', function(e){
     padding-left: 5px;
     border-radius: 7px;
     overflow: hidden;
+    position: relative;
+}
+
+/* 
+  use this to put placeholder text in contentedible 
+  placeholder var is placeholder value in div
+*/
+[contenteditable=true]:empty:not(:focus):before{
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+  opacity: 0.5;
+  cursor:text;
 }
 
 .searchSubmitButton {
     background: #dddddd;
     color: #111111;
-    transition: 0.5s all linear;
+    transition: 0.2s all linear;
     height: 100%;
     line-height: 30px;
     width: 30%;

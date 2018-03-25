@@ -6,14 +6,32 @@ import router from './router'
 import store from './store'
 import search from './components/search'
 
+import firebase from 'firebase'
+
 Vue.config.productionTip = false
 
-Vue.component('search', search);
+// Initialize Firebase
+let app;
+var config = {
+  apiKey: "AIzaSyA-rrCEAY3uzNqiRVqpQ8nyrK_NUGwkHG0",
+  authDomain: "vue-tv-app.firebaseapp.com",
+  databaseURL: "https://vue-tv-app.firebaseio.com",
+  projectId: "vue-tv-app",
+  storageBucket: "",
+  messagingSenderId: "292005833741"
+};
+firebase.initializeApp(config);
+firebase.auth().onAuthStateChanged(function(user) {
+  if(!app) {
+    /* eslint-disable no-new */
+    new Vue({
+      el: '#app',
+      router,
+      components: { App },
+      template: '<App/>'
+    })
+  }
+});
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
-})
+
+Vue.component('search', search);
