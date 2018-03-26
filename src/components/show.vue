@@ -147,12 +147,21 @@ export default {
         var database = firebase.database();
         var ref = database.ref('users/' + self.userID);
         var refFavorites = database.ref('users/' + self.userID + "/favorites");
-        refFavorites.on("child_added", function(snapshot) {
+        ref.on("child_added", function(snapshot) {
           var favData = snapshot.val();
-          $.each(favData, function(key, value) {
-            self.favorites.push(favData.showName);
-          });
+          
+          if(typeof favData == 'object') {
+            //console.log(favData);
+            $.each(favData, function(key, value) {
+              var favObj = {
+                favID: key,
+                name: value.showName
+              }
+              self.favorites.push(favObj);
+            });
           self.checkIfFavorite(); 
+          }
+          
         });
       }
     },
@@ -160,18 +169,18 @@ export default {
 
       // make sure to run this function after self.show has been set else it will fail
 
-      
       var self = this;
       // check if this show is already a favorite
-      if(self.favorites) {
+      if(self.show) {
         console.log(self.favorites.length);
         for(var i = 0; i < self.favorites.length; i++) {
-          if(self.show.name == self.favorites[i]) {
+          if(self.show.name == self.favorites[i].name) {
             console.log(self.favorites[i])
             self.showIsFavorite = true;
           }
         }
       } else {
+
       }
     },
     checkForShowID() {
@@ -207,7 +216,7 @@ export default {
       })
       .then(function(response) {
         self.show = response.data;
-        self.checkIfFavorite();
+        //self.checkIfFavorite();
         self.numSeasons = self.show.seasons.length;
         self.getSeasonData();
       })
@@ -329,7 +338,20 @@ export default {
       }
     },
     removeFromFavorites() {
-
+      var self = this;
+      var database = firebase.database();
+      var refFavorites = database.ref('users/' + self.userID + "/favorites/");
+      //refFavorites.child('users/' + self.userID + '/favorites').remove();
+      for(var i = 0; i < self.favorites.length; i++) {
+        if(self.show.name == self.favorites[i].name) {
+          var favID = self.favorites[i].favID;
+          console.log('found match')
+        }
+      }
+      refFavorites.child(favID).remove();
+      //if (refFavorites.childExists(favID)) {
+      //  console.log('found child')
+      //}
     },
   }
 }
