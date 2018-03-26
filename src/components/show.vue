@@ -70,7 +70,8 @@
         </div>
       </div>
 
-      <div class="addToFavoritesButton" v-on:click="addToFavorites">Add to favorites</div>
+      <div class="addToFavoritesButton" v-if="!showIsFavorite" v-on:click="addToFavorites">Add to favorites</div>
+      <div class="removeFromFavoritesButton" v-if="showIsFavorite" v-on:click="removeFromFavorites">Remove from favorites</div>
       
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
         <div class="season"v-for="season in seasons">
@@ -114,11 +115,13 @@ export default {
       seasons: null,
       loggedIn: false,
       userID: '',
+      favorites: [],
+      showIsFavorite: false,
     }
   },
   created() {
-    this.checkLoggedIn();
     this.checkForShowID();
+    this.checkLoggedIn();
   },
   filters: {
     checkIfOverTen: function (string) {
@@ -139,6 +142,36 @@ export default {
         // if loggedIn equals true then show add to favorites button
         self.loggedIn = true;
         self.userID = firebase.auth().currentUser.uid;
+
+        // set favorites data
+        var database = firebase.database();
+        var ref = database.ref('users/' + self.userID);
+        var refFavorites = database.ref('users/' + self.userID + "/favorites");
+        refFavorites.on("child_added", function(snapshot) {
+          var favData = snapshot.val();
+          $.each(favData, function(key, value) {
+            self.favorites.push(favData.showName);
+          });
+          self.checkIfFavorite(); 
+        });
+      }
+    },
+    checkIfFavorite() {
+
+      // make sure to run this function after self.show has been set else it will fail
+
+      
+      var self = this;
+      // check if this show is already a favorite
+      if(self.favorites) {
+        console.log(self.favorites.length);
+        for(var i = 0; i < self.favorites.length; i++) {
+          if(self.show.name == self.favorites[i]) {
+            console.log(self.favorites[i])
+            self.showIsFavorite = true;
+          }
+        }
+      } else {
       }
     },
     checkForShowID() {
@@ -174,6 +207,7 @@ export default {
       })
       .then(function(response) {
         self.show = response.data;
+        self.checkIfFavorite();
         self.numSeasons = self.show.seasons.length;
         self.getSeasonData();
       })
@@ -274,40 +308,28 @@ export default {
       var ref = database.ref('users/' + self.userID);
       var refFavorites = database.ref('users/' + self.userID + "/favorites");
 
-      // check db to see if show is already favorited
-      /*
-      ref.on('value', function(snapshot) {
-        snapshot(function(childSnapshot) {
-          var childData = childSnapshot.val();
-          if(typeof childData == 'object') {
-            $.each(childData, function(key, value) {
-              console.log(value.showName);
-            }); 
-          }
-        });
-      });
-      */
-      refFavorites.on("child_added", function(snapshot, prevChildKey) {
-        var favData = snapshot.val();
-        $.each(favData, function(key, value) {
-              console.log(favData.showName);
-            }); 
-      });
-
-      database.ref('users/' + self.userID + '/favorites').push({
+      if(self.favorites.length == 0) {
+        database.ref('users/' + self.userID + '/favorites').push({
           "showName": self.show.name
-      });
-
-      var favoritesLength = firebase.auth().currentUser;
-      
-      /*
-      database.ref('users/').once('value').then(function(snapshot) {
-        snapshot.forEach(function(userSnapshot) {
-          var username = userSnapshot.val();
-          console.log(username);
         });
-      });
-      */
+      } else {
+        var foundMatch = false;
+        for(var i = 0; i < self.favorites.length; i++) {
+          if(self.favorites[i] == self.show.name) {
+            console.log('found a match');
+            foundMatch = true;
+          } 
+          if(i == self.favorites.length - 1 && foundMatch == false) {
+            console.log('didnt find a match')
+            database.ref('users/' + self.userID + '/favorites').push({
+              "showName": self.show.name
+            });
+          }
+        }
+      }
+    },
+    removeFromFavorites() {
+
     },
   }
 }
