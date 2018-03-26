@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <div class="addToFavoritesButton" v-if="!showIsFavorite" v-on:click="addToFavorites">Add to favorites</div>
+      <div class="addToFavoritesButton" v-if="showIsNotFavorite" v-on:click="addToFavorites">Add to favorites</div>
       <div class="removeFromFavoritesButton" v-if="showIsFavorite" v-on:click="removeFromFavorites">Remove from favorites</div>
       
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
@@ -117,6 +117,9 @@ export default {
       userID: '',
       favorites: [],
       showIsFavorite: false,
+      showIsNotFavorite: false,
+      favoritesPromiseReturned: false,
+      showPromiseReturned: false,
     }
   },
   created() {
@@ -149,9 +152,7 @@ export default {
         var refFavorites = database.ref('users/' + self.userID + "/favorites");
         ref.on("child_added", function(snapshot) {
           var favData = snapshot.val();
-          
           if(typeof favData == 'object') {
-            //console.log(favData);
             $.each(favData, function(key, value) {
               var favObj = {
                 favID: key,
@@ -159,6 +160,7 @@ export default {
               }
               self.favorites.push(favObj);
             });
+          self.favoritesPromiseReturned = true;
           self.checkIfFavorite(); 
           }
           
@@ -166,21 +168,27 @@ export default {
       }
     },
     checkIfFavorite() {
-
-      // make sure to run this function after self.show has been set else it will fail
-
+      console.log('running checkIfFavorite')
       var self = this;
-      // check if this show is already a favorite
-      if(self.show) {
-        console.log(self.favorites.length);
-        for(var i = 0; i < self.favorites.length; i++) {
-          if(self.show.name == self.favorites[i].name) {
-            console.log(self.favorites[i])
-            self.showIsFavorite = true;
+      if(self.showPromiseReturned && self.favoritesPromiseReturned) {
+        console.log('both promises have been returned');
+        // check if this show is already a favorite
+        if(self.show) {
+          for(var i = 0; i < self.favorites.length; i++) {
+            if(self.show.name == self.favorites[i].name) {
+              self.showIsFavorite = true;
+            }
+            if(i == self.favorites.length - 1) {
+              if(self.showIsFavorite == false) {
+                // if at end of check loop and still no match
+                // add to favorites btn to display
+                self.showIsNotFavorite = true;
+              }
+            }
           }
+        } else {
+          console.log('no show')
         }
-      } else {
-
       }
     },
     checkForShowID() {
@@ -216,7 +224,8 @@ export default {
       })
       .then(function(response) {
         self.show = response.data;
-        //self.checkIfFavorite();
+        self.showPromiseReturned = true;
+        self.checkIfFavorite();
         self.numSeasons = self.show.seasons.length;
         self.getSeasonData();
       })
@@ -530,8 +539,22 @@ export default {
   text-align: end;
 }
 
+.addToFavoritesButton, .removeFromFavoritesButton {
+  border-radius: 3px;
+  padding: 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .addToFavoritesButton {
-  border: 1px solid #dddddd;
+  background: #229953;
+}
+
+.removeFromFavoritesButton {
+  background: #c22828;
 }
 
 </style>
