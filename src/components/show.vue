@@ -104,6 +104,7 @@
 import axios from 'axios';
 import $ from 'jquery';
 import firebase from 'firebase';
+import Vuex from 'vuex';
 
 export default {
   name: 'show',
@@ -145,44 +146,52 @@ export default {
         // if loggedIn equals true then show add to favorites button
         self.loggedIn = true;
         self.userID = firebase.auth().currentUser.uid;
-
-        // set favorites data
-        var database = firebase.database();
-        var ref = database.ref('users/' + self.userID);
-        var refFavorites = database.ref('users/' + self.userID + "/favorites");
-        ref.on("child_added", function(snapshot) {
-          var favData = snapshot.val();
-          if(typeof favData == 'object') {
-            $.each(favData, function(key, value) {
-              var favObj = {
-                favID: key,
-                name: value.showName
-              }
-              self.favorites.push(favObj);
-            });
-          self.favoritesPromiseReturned = true;
-          self.checkIfFavorite(); 
-          }
-          
-        });
+        //self.$store.commit('userIsLoggedIn');
+        //self.$store.commit('setUsername');
+        self.getFavorites();
       }
     },
-    checkIfFavorite() {
-      console.log('running checkIfFavorite')
+    getFavorites() {
       var self = this;
-      if(self.showPromiseReturned && self.favoritesPromiseReturned) {
-        console.log('both promises have been returned');
+      // set favorites data
+      var database = firebase.database();
+      var ref = database.ref('users/' + self.userID);
+      var refFavorites = database.ref('users/' + self.userID + "/favorites");
+      self.favorites = [];
+      ref.on("child_added", function(snapshot) {
+        var favData = snapshot.val();
+        if(typeof favData == 'object') {
+          $.each(favData, function(key, value) {
+            var favObj = {
+              favID: key,
+              name: value.showName
+            }
+            self.favorites.push(favObj);
+          });
+        self.favoritesPromiseReturned = true;
+        self.checkIfFavorite(); 
+        }
+        
+      });
+    },
+    checkIfFavorite() {
+      var self = this;
+      self.showIsNotFavorite = false;
+      self.showIsFavorite = false;
+      if(self.showPromiseReturned && self.favoritesPromiseReturned) {;
         // check if this show is already a favorite
         if(self.show) {
           for(var i = 0; i < self.favorites.length; i++) {
             if(self.show.name == self.favorites[i].name) {
               self.showIsFavorite = true;
+              self.showIsNotFavorite = false;
             }
             if(i == self.favorites.length - 1) {
               if(self.showIsFavorite == false) {
                 // if at end of check loop and still no match
                 // add to favorites btn to display
                 self.showIsNotFavorite = true;
+                self.showIsFavorite = false;
               }
             }
           }
@@ -225,7 +234,8 @@ export default {
       .then(function(response) {
         self.show = response.data;
         self.showPromiseReturned = true;
-        self.checkIfFavorite();
+        //self.checkIfFavorite();
+        self.getFavorites();
         self.numSeasons = self.show.seasons.length;
         self.getSeasonData();
       })
@@ -260,30 +270,30 @@ export default {
           }
           self.seasons.push(response.data["season/" + j])
         }
+        // if more than 20 seasons then run a second request for seasons over 20
+        if(self.numSeasons > 20) {
+          axios({
+            method:'get',
+            url:'https://api.themoviedb.org/3/tv/' + self.showID + '?api_key=75234636e15f7c2463efbf69fd35b291&append_to_response=' + seasonsToAppendPart2,
+          })
+          .then(function(response) {
+            for(var k = 0; k < self.numSeasons; k++) {
+              if(response.data["season/" + k] == undefined) {
+                // if season is missing, then skip
+                // some shows don't have a seasons zero, others do
+                continue;
+              }
+              self.seasons.push(response.data["season/" + k])
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-      // if more than 20 seasons then run a second request for seasons over 20
-      if(self.numSeasons > 20) {
-            axios({
-              method:'get',
-              url:'https://api.themoviedb.org/3/tv/' + self.showID + '?api_key=75234636e15f7c2463efbf69fd35b291&append_to_response=' + seasonsToAppendPart2,
-            })
-            .then(function(response) {
-              for(var k = 0; k < self.numSeasons; k++) {
-                if(response.data["season/" + k] == undefined) {
-                  // if season is missing, then skip
-                  // some shows don't have a seasons zero, others do
-                  continue;
-                }
-                self.seasons.push(response.data["season/" + k])
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-          }
     },
     toggleList(event) {
       // on click toggle visibilty of list children
@@ -302,7 +312,6 @@ export default {
           // is active and the background is dimmed
           // exit the overlay and remove the dim
           $(".eachSeasonsEpisodes").each(function() {
-            console.log('testing')
             if($(this).hasClass("overlay")) {
               $(this).removeClass("overlay");
             }
@@ -345,6 +354,8 @@ export default {
           }
         }
       }
+      //self.checkIfFavorite();
+      self.getFavorites();
     },
     removeFromFavorites() {
       var self = this;
@@ -358,9 +369,8 @@ export default {
         }
       }
       refFavorites.child(favID).remove();
-      //if (refFavorites.childExists(favID)) {
-      //  console.log('found child')
-      //}
+      //self.checkIfFavorite();
+      self.getFavorites();
     },
   }
 }

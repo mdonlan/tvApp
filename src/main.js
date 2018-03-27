@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import search from './components/search'
+import topNav from './components/topNav'
 
 import firebase from 'firebase'
 
@@ -27,11 +28,14 @@ firebase.auth().onAuthStateChanged(function(user) {
     new Vue({
       el: '#app',
       router,
+      store,
       components: { App },
       template: '<App/>'
     })
   }
 });
 
-
+// register components globally
 Vue.component('search', search);
+Vue.component('topNav', topNav);
+

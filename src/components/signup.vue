@@ -1,8 +1,12 @@
 <template>
   <div class="signUpWrapper">
-    <input type="text" v-model="email" placeholder="Email">
-    <input type="password" v-model="password" placeholder="Password">
-    <div v-on:click="createAccount">Create Account</div>
+    <div class="signUpContainer">
+      <div class="title">Create an account</div>
+      <div class="details">Having an account allows you to add shows to your favorites and track them to make sure you never miss an episode!</div>
+      <input class="email" type="text" v-model="email" placeholder="Email">
+      <input class="password" type="password" v-model="password" placeholder="Password">
+      <div class="signUpButton" v-on:click="createAccount">Create Account</div>
+    </div>
   </div>
 </template>
 
@@ -57,6 +61,61 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+.signUpWrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #dddddd;
+}
 
+.signUpContainer {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.signUpButton {
+  margin-top: 10px;
+  border: 1px solid #dddddd;
+  padding: 7px;
+  text-align: center;
+  transition: 0.5s all;
+  cursor: pointer;
+  width: 50%;
+}
+
+.signUpButton:hover {
+  background: #2fda93;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.details {
+  margin-top: 10px;
+  margin-bottom: 75px;
+}
+
+.email, .password {
+  border: 1px solid #dddddd;
+  padding: 5px;
+}
+
+input {
+  border: 0;
+  padding: 0;
+  margin: 10px;
+  background: transparent;
+  text-align: center;
+  color: #dddddd;
+  font-size: 18px;
+  width: 50%;
+}
 
 </style>

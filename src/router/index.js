@@ -6,7 +6,6 @@ import searchResults from '@/components/searchResults'
 import login from '@/components/login'
 import signup from '@/components/signup'
 import user from '@/components/user'
-import nav from '@/components/nav'
 
 import firebase from 'firebase';
 
@@ -46,11 +45,6 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
-    },
-    {
-      path: '/nav',
-      name: 'nav',
-      component: nav
     },
   ]
 })
