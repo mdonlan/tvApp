@@ -1,7 +1,12 @@
 <template>
   <div class="wrapper">
-      <div>hello user</div>
-      <div v-on:click="logOut">log out</div>
+      
+      <div></div>
+      <div class="favoriteData" v-if="this.$store.state.favorites">
+        <div v-for="show in favorites">
+          {{show.name}}
+        </div>
+      </div>
   </div>
 </template>
 
@@ -14,7 +19,7 @@ export default {
   name: 'user',
   data () {
     return {
-      
+      //favorites: this.$store.state.favorites,
     }
   },
   created() {
@@ -23,12 +28,12 @@ export default {
   filters: {
 
   },
+  computed: {
+    favorites: function() {
+      return this.$store.state.favorites;
+    }
+  },
   methods: {
-    logOut() {
-      firebase.auth().signOut().then(() => {
-        this.$router.push('login')
-      })
-    },
     
   }
 }

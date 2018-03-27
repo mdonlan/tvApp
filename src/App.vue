@@ -39,9 +39,35 @@ export default {
           var database = firebase.database();
           var ref = database.ref('users/' + self.userID);
           ref.on("value", function(snapshot) {
-            self.$store.commit('setUsername', snapshot.val().username);
+            var data = {
+              username: snapshot.val().username,
+              userID: self.userID
+            }
+            self.$store.commit('setUsernameAndID', data);
+            self.getFavorites();
           });
         }
+      });
+    },
+    getFavorites() {
+      var self = this;
+      var database = firebase.database();
+      //console.log(this.$store.state.userID)
+      var ref = database.ref('users/' + this.$store.state.userID);
+      var refFavorites = database.ref('users/' + this.$store.state.userID + "/favorites");
+      var favorites = [];
+      ref.on("child_added", function(snapshot) {
+        var favData = snapshot.val();
+        if(typeof favData == 'object') {
+          $.each(favData, function(key, value) {
+            var favObj = {
+              favID: key,
+              name: value.showName
+            }
+            favorites.push(favObj);
+          });
+        }
+        self.$store.commit('setFavorites', favorites);
       });
     },
   }

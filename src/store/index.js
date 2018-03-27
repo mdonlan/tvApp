@@ -9,6 +9,8 @@ export default new Vuex.Store({
     selectedShowID: null,
     userLoggedIn: false,
     username: null,
+    userID: null,
+    favorites: [],
   },
   actions: {
 
@@ -17,11 +19,16 @@ export default new Vuex.Store({
     userIsLoggedIn (state) {
       state.userLoggedIn = true;
     },
-    setUsername (state, username) {
-      state.username = username;
+    setUsernameAndID (state, data) {
+      state.username = data.username;
+      state.userID = data.userID;
+    },
+    setFavorites (state, favorites) {
+      state.favorites = favorites;
+      //Vue.set(state, 'favorites', favorites)
     }
   },
   getters: {
-
+    
   }
 });

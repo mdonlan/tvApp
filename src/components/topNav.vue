@@ -6,6 +6,7 @@
       <router-link v-if="!this.$store.state.userLoggedIn" class="loginBtn" to="/login">Login</router-link>
       <router-link v-if="this.$store.state.userLoggedIn" class="registerBtn" to="/signUp">Register</router-link>
       <router-link v-if="this.$store.state.username" class="userAccountBtn" to="/user">{{this.$store.state.username}}</router-link>
+      <div v-if="this.$store.state.userLoggedIn" v-on:click="logOut">log out</div>
     </div>
   </div>
 </template>
@@ -14,6 +15,7 @@
 import axios from 'axios';
 import $ from 'jquery';
 import Vuex from 'vuex';
+import firebase from 'firebase';
 
 export default {
   name: 'topNav',
@@ -23,13 +25,17 @@ export default {
     }
   },
   created() {
-    
+
   },
   filters: {
 
   },
   methods: {
-
+    logOut() {
+      firebase.auth().signOut().then(() => {
+        this.$router.push('login')
+      })
+    },
   }
 }
 
