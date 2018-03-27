@@ -60,8 +60,9 @@ export default {
         var favData = snapshot.val();
         if(typeof favData == 'object') {
           $.each(favData, function(key, value) {
+            //console.log(favData)
             var favObj = {
-              favID: key,
+              showID: value.showID,
               name: value.showName
             }
             favorites.push(favObj);

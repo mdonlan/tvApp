@@ -1,12 +1,14 @@
 <template>
   <div class="topNavWrapper">
-    <div class="left">left</div>
-    <div class="center">center</div>
+    <div class="left"><router-link class="homeBtn" to="/">Home</router-link></div>
+    <div class="center">
+      <search></search>
+    </div>
     <div class="right">
       <router-link v-if="!this.$store.state.userLoggedIn" class="loginBtn" to="/login">Login</router-link>
-      <router-link v-if="this.$store.state.userLoggedIn" class="registerBtn" to="/signUp">Register</router-link>
+      <router-link v-if="!this.$store.state.userLoggedIn" class="registerBtn" to="/signUp">Register</router-link>
       <router-link v-if="this.$store.state.username" class="userAccountBtn" to="/user">{{this.$store.state.username}}</router-link>
-      <div v-if="this.$store.state.userLoggedIn" v-on:click="logOut">log out</div>
+      <div v-if="this.$store.state.userLoggedIn" class="logoutBtn" v-on:click="logOut">Log Out</div>
     </div>
   </div>
 </template>
@@ -32,8 +34,10 @@ export default {
   },
   methods: {
     logOut() {
+      var self = this;
       firebase.auth().signOut().then(() => {
-        this.$router.push('login')
+        this.$router.push('login');
+        self.$store.commit('logOut');
       })
     },
   }
@@ -45,7 +49,7 @@ export default {
 <style scoped>
 
 .topNavWrapper {
-  height: 40px;
+  height: 60px;
   width: 100%;
   background: #111111;
   display: flex;
@@ -61,7 +65,7 @@ export default {
   align-items: center;
 }
 
-a {
+a, .logoutBtn {
   text-decoration: none;
   color: #dddddd;
   cursor: pointer;
@@ -78,6 +82,11 @@ a {
 a:hover {
   color: #111111;
   background: #dddddd;
+}
+
+.logoutBtn:hover {
+  color: #dddddd;
+  background: #b91414;
 }
 
 </style>

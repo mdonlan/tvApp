@@ -141,15 +141,16 @@ export default {
   methods: {
     checkLoggedIn() {
       var self = this;
-      if(firebase.auth().currentUser.uid) {
-        // if user is logged in set logged in to true
-        // if loggedIn equals true then show add to favorites button
+      firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        //console.log('no user logged in');
+      } else if(user) {
+          //console.log('user logged in');
         self.loggedIn = true;
         self.userID = firebase.auth().currentUser.uid;
-        //self.$store.commit('userIsLoggedIn');
-        //self.$store.commit('setUsername');
         self.getFavorites();
-      }
+        }
+      });
     },
     getFavorites() {
       var self = this;
@@ -180,7 +181,7 @@ export default {
       self.showIsFavorite = false;
       if(self.showPromiseReturned && self.favoritesPromiseReturned) {;
         // check if this show is already a favorite
-        if(self.show) {
+        if(self.loggedIn) {
           for(var i = 0; i < self.favorites.length; i++) {
             if(self.show.name == self.favorites[i].name) {
               self.showIsFavorite = true;
@@ -337,7 +338,8 @@ export default {
 
       if(self.favorites.length == 0) {
         database.ref('users/' + self.userID + '/favorites').push({
-          "showName": self.show.name
+          "showName": self.show.name,
+          "showID": self.showID,
         });
       } else {
         var foundMatch = false;
@@ -349,7 +351,8 @@ export default {
           if(i == self.favorites.length - 1 && foundMatch == false) {
             console.log('didnt find a match')
             database.ref('users/' + self.userID + '/favorites').push({
-              "showName": self.show.name
+              "showName": self.show.name,
+              "showID": self.showID,
             });
           }
         }

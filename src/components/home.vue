@@ -1,6 +1,5 @@
 <template>
   <div class="wrapper">
-    <search></search>
     <div class="title">Popular</div> 
     <div class="popularContainer container" v-if="popularTV">
       <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event)">

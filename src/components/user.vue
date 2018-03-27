@@ -1,10 +1,16 @@
 <template>
   <div class="wrapper">
       
-      <div></div>
-      <div class="favoriteData" v-if="this.$store.state.favorites">
+      <div class="title">Favorite Shows</div>
+      <div class="favoriteContainer" v-if="this.$store.state.favorites">
         <div v-for="show in favorites">
           {{show.name}}
+        </div>
+      </div>
+
+      <div class="calendarContainer">
+        <div class="day" v-for="day in days">
+          <div class="dayTitle">{{day.fullDate}}</div>
         </div>
       </div>
   </div>
@@ -13,17 +19,33 @@
 <script>
 import axios from 'axios';
 import $ from 'jquery';
-import firebase from 'firebase';
+import firebase,{ app } from 'firebase';
 
 export default {
   name: 'user',
   data () {
     return {
-      //favorites: this.$store.state.favorites,
+      days: [],
     }
   },
   created() {
-
+    this.getDate();
+    //this.findNextAirDate();
+    this.$store.watch(
+      (state)=>{
+        return this.$store.state.favorites // could also put a Getter here
+      },
+      (oldValue, newValue)=>{
+      //something changed do something
+      //console.log(oldValue)
+      //console.log(newValue)
+      this.findNextAirDate();
+      },
+      //Optional Deep if you need it
+      {
+        deep:true
+      }
+    )
   },
   filters: {
 
@@ -34,17 +56,135 @@ export default {
     }
   },
   methods: {
-    
+    getDate() {
+      var self = this;
+      for(var i = -3; i < 4; i++) {
+        var tempDate = new Date();
+        tempDate.setDate(tempDate.getDate() + i);
+        var date = tempDate.getDate();
+        var month = tempDate.getMonth();
+        var day = tempDate.getDay();
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+        var fullDate = days[day] + ' ' + months[month] + ' ' + date;
+        var day = {
+          fullDate: fullDate,
+          date: tempDate,
+        }
+        self.days.push(day);
+      }
+    },
+    findNextAirDate() {
+      var self = this;
+      var appendData = this.$store.state.favorites[0].showID;
+      for(var i = 0; i < this.$store.state.favorites.length; i++) {
+        axios({
+        method:'get',
+        url:'http://api.themoviedb.org/3/tv/' + this.$store.state.favorites[i].showID + '?api_key=75234636e15f7c2463efbf69fd35b291',
+        })
+        .then(function(response) {
+          console.log(response)
+          // on show details promise return
+          // get season details
+          var onSeason = response.data.number_of_seasons;
+          var showID = response.data.id;
+          axios({
+            method:'get',
+            url:'http://api.themoviedb.org/3/tv/' + showID + '/season/' + onSeason + '?api_key=75234636e15f7c2463efbf69fd35b291',
+          })
+          .then(function(response) {
+            // based on current date find which episode is closest
+            var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+            var episodes = response.data.episodes;
+            var date = new Date();
+            var weeklyEpisodes = [];
+            for(var j = 0; j < episodes.length; j++) {
+              var episodeDate = new Date(episodes[j].air_date)
+              var daysDiff = Math.round(Math.abs((date.getTime() - episodeDate.getTime())/(oneDay)));
+              if(daysDiff <= 3) {
+                weeklyEpisodes.push(episodes[j]);
+              }
+            }
+            
+            // after finding all episodes airing this week 
+            // display them
+            //console.log(weeklyEpisodes);
+            self.displayEpisodes(weeklyEpisodes);
+            
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+    },
+    displayEpisodes(weeklyEpisodes) {
+      var self = this;
+      var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      $.each(self.days, function(index, value) {
+        for(var i = 0; i < weeklyEpisodes.length; i++) {
+          var airdate = new Date(weeklyEpisodes[i].air_date);
+          var date = airdate.getDate();
+          var month = airdate.getMonth();
+          var day = airdate.getDay();
+          var fullAirDate = days[day] + ' ' + months[month] + ' ' + date;
+          if(value.fullDate == fullAirDate) {
+            console.log('matching')
+          } else {
+
+          }
+        }
+      });
+    },
   }
 }
-
-
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+.wrapper {
+  height: 100%;
+  width: 100%;
+  color: #dddddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 
+.title {
+  font-size: 24px;
+}
+
+.favoriteContainer {
+  margin-top: 55px;
+  display: flex;
+  flex-direction: column; 
+}
+
+.calendarContainer {
+  height: 500px;
+  width: 80%;
+  display: flex;
+}
+
+.day {
+  height: 100%;
+  width: 14.3%;
+  border: 1px solid #dddddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dayTitle {
+  border-bottom: 1px solid #dddddd;
+}
 
 </style>

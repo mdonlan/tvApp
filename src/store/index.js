@@ -26,6 +26,12 @@ export default new Vuex.Store({
     setFavorites (state, favorites) {
       state.favorites = favorites;
       //Vue.set(state, 'favorites', favorites)
+    },
+    logOut(state) {
+      state.userLoggedIn =  false;
+      state.username = null;
+      state.userID = null;
+      state.favorites = [];
     }
   },
   getters: {
