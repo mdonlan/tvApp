@@ -12,7 +12,10 @@
         <div class="day" v-for="day in days">
           <div class="dayTitle">{{day.fullDate}}</div>
           <div class="dayShows" v-if="day.thisDaysShows">
-            <div class="show">{{day.thisDaysShows.showName}}</div>
+            <div class="show" v-for="show in day.thisDaysShows">
+              <div>{{show.showName}}</div>
+              <div>{{show.airTime}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -108,6 +111,7 @@ export default {
               var daysDiff = Math.round(Math.abs((date.getTime() - episodeDate.getTime())/(oneDay)));
               if(daysDiff <= 3) {
                 episodes[j].showName = showName;
+                episodes[j].showID = showID;
                 weeklyEpisodes.push(episodes[j]);
               }
             }
@@ -140,13 +144,64 @@ export default {
           var fullAirDate = days[day] + ' ' + months[month] + ' ' + date;
           if(value.fullDate == fullAirDate) {
             //console.log(index)
-            self.$set(self.days[index], 'thisDaysShows', [])
-            self.days[index].thisDaysShows = weeklyEpisodes[i];
+            if(typeof self.days[index].thisDaysShows == 'undefined') {
+              self.$set(self.days[index], 'thisDaysShows', [])
+            }
+            
+            self.days[index].thisDaysShows.push(weeklyEpisodes[i]);
+            var lastAdded = self.days[index].thisDaysShows.length - 1;
             //self.days[index].push(weeklyEpisodes[i]);
+            self.getShowTimes(value, index, weeklyEpisodes[i], lastAdded);
           } else {
 
           }
         }
+      });
+    },
+    getShowTimes(value, index, onShow, onShowIndex) {
+      var self = this;
+      //http://api.tvmaze.com/search/shows?q=girls
+      var showID = '';
+      for(var i = 0; i < value.thisDaysShows.length; i++) {
+        if(value.thisDaysShows[i].showName == onShow.showName) {
+          showID = value.thisDaysShows[i].showID;
+        }
+      }
+      axios({
+        method:'get',
+        url:'https://api.themoviedb.org/3/tv/' + showID + '/external_ids?api_key=75234636e15f7c2463efbf69fd35b291',
+      })
+      .then(function(response) {
+        var imdbID = response.data.imdb_id;
+        axios({
+          method:'get',
+          url:'http://api.tvmaze.com/lookup/shows?imdb=' + imdbID,
+        })
+        .then(function(response) {
+          //console.log(response);
+          
+          var airTime = parseInt(response.data.schedule.time);
+          if(airTime > 12) {
+            airTime = airTime - 12;
+            airTime.toString();
+            airTime += 'PM';
+          } else {
+            airTime.toString();
+            airTime += 'AM';
+          }
+          //self.$set(self.days[index].thisDaysShows[onShowIndex], 'airTime', '')
+          //self.$set(self.days[index], 'thisDaysShows', [])
+          //console.log(onShowIndex)
+          self.$set(self.days[index].thisDaysShows[onShowIndex], 'airTime', '')
+          self.days[index].thisDaysShows[onShowIndex].airTime = airTime;
+         
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
       });
     },
   }
@@ -193,6 +248,10 @@ export default {
 
 .dayTitle {
   border-bottom: 1px solid #dddddd;
+}
+
+.dayShows {
+  display: flex;
 }
 
 </style>
