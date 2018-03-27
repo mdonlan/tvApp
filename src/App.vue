@@ -28,15 +28,21 @@ export default {
   methods: {
     checkLoggedIn() {
       var self = this;
-      if(firebase.auth().currentUser.uid) {
-        self.userID = firebase.auth().currentUser.uid;
-        self.$store.commit('userIsLoggedIn');
-        var database = firebase.database();
-        var ref = database.ref('users/' + self.userID);
-        ref.on("value", function(snapshot) {
-          self.$store.commit('setUsername', snapshot.val().username);
-        });
-      }
+      // checks if there is a user logged in
+      firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        //console.log('no user logged in');
+      } else if(user) {
+          //console.log('user logged in');
+          self.userID = firebase.auth().currentUser.uid;
+          self.$store.commit('userIsLoggedIn');
+          var database = firebase.database();
+          var ref = database.ref('users/' + self.userID);
+          ref.on("value", function(snapshot) {
+            self.$store.commit('setUsername', snapshot.val().username);
+          });
+        }
+      });
     },
   }
 }

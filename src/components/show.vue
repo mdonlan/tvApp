@@ -517,8 +517,6 @@ export default {
 }
 
 .overlayBackground {
-  height: 100%;
-  width: 100%;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -526,6 +524,8 @@ export default {
 }
 
 .dim {
+  height: 100%;
+  width: 100%;
   position: fixed;
   background: #111111;
   opacity: 0.9;

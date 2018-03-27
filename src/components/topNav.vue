@@ -4,8 +4,8 @@
     <div class="center">center</div>
     <div class="right">
       <router-link v-if="!this.$store.state.userLoggedIn" class="loginBtn" to="/login">Login</router-link>
-      <router-link v-if="!this.$store.state.userLoggedIn" class="registerBtn" to="/signUp">Register</router-link>
-      <router-link v-if="this.$store.state.userLoggedIn" class="userAccountBtn" to="/user">{{this.$store.state.username}}</router-link>
+      <router-link v-if="this.$store.state.userLoggedIn" class="registerBtn" to="/signUp">Register</router-link>
+      <router-link v-if="this.$store.state.username" class="userAccountBtn" to="/user">{{this.$store.state.username}}</router-link>
     </div>
   </div>
 </template>
@@ -23,16 +23,13 @@ export default {
     }
   },
   created() {
-    this.checkIfLoggedIn();
+    
   },
   filters: {
 
   },
   methods: {
-    checkIfLoggedIn() {
-      var self = this;
-      console.log(self.$store.state.userLoggedIn)
-    },
+
   }
 }
 
