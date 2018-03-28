@@ -60,7 +60,7 @@ export default {
       var self = this;
       axios({
         method:'get',
-        url:'http://api.themoviedb.org/3/tv/airing_today?api_key=75234636e15f7c2463efbf69fd35b291',
+        url:'https://api.themoviedb.org/3/tv/airing_today?api_key=75234636e15f7c2463efbf69fd35b291',
       })
       .then(function(response) {
         // only return the first 9 shows
