@@ -1,5 +1,24 @@
 <template>
   <div class="wrapper">
+
+    <div class="title">Weekly Shows</div>
+    <div class="calendarContainer">
+      <div class="day" v-for="day in days">
+        <div class="dayTitle">{{day.fullDate}}</div>
+        <div class="dayShows" v-if="day.thisDaysShows">
+          <div class="show" v-for="show in day.thisDaysShows">
+            <div class="left">
+              <div class="showName">{{show.showName}}</div>
+              <div class="episodeName">{{show.name}}</div>
+            </div>
+            <div class="right">
+              <div>{{show.airTime}}</div>
+            </div>
+            <div class="clickZone" v-on:click="clickedCalendarShow($event)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
       
       <div class="title">Favorite Shows</div>
       <div class="favoriteContainer" v-if="this.$store.state.favorites">
@@ -8,23 +27,6 @@
           <div class="favoriteShowRight">
             <div class="viewBtn btn" v-on:click="viewShow($event)">View</div>
             <div class="removeBtn btn" v-on:click="removeFromFavorites($event)">Remove</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="calendarContainer">
-        <div class="day" v-for="day in days">
-          <div class="dayTitle">{{day.fullDate}}</div>
-          <div class="dayShows" v-if="day.thisDaysShows">
-            <div class="show" v-for="show in day.thisDaysShows">
-              <div class="left">
-                <div class="showName">{{show.showName}}</div>
-                <div class="episodeName">{{show.name}}</div>
-              </div>
-              <div class="right">
-                <div>{{show.airTime}}</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -45,9 +47,7 @@ export default {
   },
   created() {
     this.getDate();
-    //this.findNextAirDate();
     if(this.$store.state.favorites.length > 0) {
-      //console.log('testing');
       this.findNextAirDate();
     } else {
       this.$store.watch(
@@ -98,49 +98,29 @@ export default {
     },
     findNextAirDate() {
       var self = this;
-      var appendData = this.$store.state.favorites[0].showID;
       for(var i = 0; i < this.$store.state.favorites.length; i++) {
         axios({
         method:'get',
-        url:'http://api.themoviedb.org/3/tv/' + this.$store.state.favorites[i].showID + '?api_key=75234636e15f7c2463efbf69fd35b291',
+        url: 'http://api.tvmaze.com/singlesearch/shows?q=' + this.$store.state.favorites[i].name + '&embed=episodes'
         })
         .then(function(response) {
-          //console.log(response)
-          // on show details promise return
-          // get season details
-          var onSeason = response.data.number_of_seasons;
-          var showID = response.data.id;
+          var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+          var allEpisodes = response.data._embedded.episodes;
           var showName = response.data.name;
-          axios({
-            method:'get',
-            url:'http://api.themoviedb.org/3/tv/' + showID + '/season/' + onSeason + '?api_key=75234636e15f7c2463efbf69fd35b291',
-          })
-          .then(function(response) {
-            // based on current date find which episode is closest
-            var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-            var episodes = response.data.episodes;
-            var date = new Date();
-            var weeklyEpisodes = [];
-            for(var j = 0; j < episodes.length; j++) {
-              var episodeDate = new Date(episodes[j].air_date)
-              var daysDiff = Math.round(Math.abs((date.getTime() - episodeDate.getTime())/(oneDay)));
-              if(daysDiff <= 3) {
-                episodes[j].showName = showName;
-                episodes[j].showID = showID;
-                weeklyEpisodes.push(episodes[j]);
-              }
+          var date = new Date();
+          var weeklyEpisodes = [];
+          
+          for(var j = 0; j < allEpisodes.length; j++) {
+            var episodeDate = new Date(allEpisodes[j].airdate)
+            var daysDiff = Math.round(Math.abs((date.getTime() - episodeDate.getTime())/(oneDay)));
+            
+            if(daysDiff <= 10) {
+              allEpisodes[j].showName = showName;
+              weeklyEpisodes.push(allEpisodes[j]);
             }
-            
-            // after finding all episodes airing this week 
-            // display them
-            //console.log(weeklyEpisodes);
+          }
             self.displayEpisodes(weeklyEpisodes);
-            
           })
-          .catch(function (error) {
-            console.log(error);
-          });
-        })
         .catch(function (error) {
           console.log(error);
         });
@@ -152,12 +132,13 @@ export default {
       var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       $.each(self.days, function(index, value) {
         for(var i = 0; i < weeklyEpisodes.length; i++) {
-          var airdate = new Date(weeklyEpisodes[i].air_date);
+          var airdate = new Date(weeklyEpisodes[i].airdate);
           var date = airdate.getDate();
           var month = airdate.getMonth();
           var day = airdate.getDay();
           var fullAirDate = days[day] + ' ' + months[month] + ' ' + date;
           if(value.fullDate == fullAirDate) {
+            
             if(typeof self.days[index].thisDaysShows == 'undefined') {
               self.$set(self.days[index], 'thisDaysShows', [])
             }
@@ -169,82 +150,41 @@ export default {
               } else {
                 for(var j = 0; j < self.days[index].thisDaysShows.length; j++) {
                   if(weeklyEpisodes[i].showName == self.days[index].thisDaysShows[j].showName) {
-                    console.log('hello')
                     alreadyDisplayed = true;
                   }
                   if(j == self.days[index].thisDaysShows.length - 1) {
                     if(alreadyDisplayed == false) {
-                      console.log(alreadyDisplayed)
+                      //console.log(alreadyDisplayed)
                       self.days[index].thisDaysShows.push(weeklyEpisodes[i]);
                     }
                   }
                 }
               }
             }
-
-            
             var lastAdded = self.days[index].thisDaysShows.length - 1;
-
-            
-
-            //self.getShowTimes(value, index, weeklyEpisodes[i], lastAdded);
-          } else {
-
+            self.getShowTimes(index, weeklyEpisodes[i], lastAdded);
           }
         }
       });
     },
-    getShowTimes(value, index, onShow, onShowIndex) {
+    getShowTimes(index, onShow, onShowIndex) {
       var self = this;
-      //http://api.tvmaze.com/search/shows?q=girls
-      var showID = '';
-      for(var i = 0; i < value.thisDaysShows.length; i++) {
-        if(value.thisDaysShows[i].showName == onShow.showName) {
-          showID = value.thisDaysShows[i].showID;
-        }
+      var airTime = parseInt(onShow.airtime);
+      if(airTime > 12) {
+        airTime = airTime - 12;
+        airTime.toString();
+        airTime += 'PM';
+      } else {
+        airTime.toString();
+        airTime += 'AM';
       }
-      axios({
-        method:'get',
-        url:'https://api.themoviedb.org/3/tv/' + showID + '/external_ids?api_key=75234636e15f7c2463efbf69fd35b291',
-      })
-      .then(function(response) {
-        var imdbID = response.data.imdb_id;
-        axios({
-          method:'get',
-          url:'http://api.tvmaze.com/lookup/shows?imdb=' + imdbID,
-        })
-        .then(function(response) {
-          //console.log(response);
-          
-          var airTime = parseInt(response.data.schedule.time);
-          if(airTime > 12) {
-            airTime = airTime - 12;
-            airTime.toString();
-            airTime += 'PM';
-          } else {
-            airTime.toString();
-            airTime += 'AM';
-          }
-          //self.$set(self.days[index].thisDaysShows[onShowIndex], 'airTime', '')
-          //self.$set(self.days[index], 'thisDaysShows', [])
-          //console.log(onShowIndex)
-          self.$set(self.days[index].thisDaysShows[onShowIndex], 'airTime', '')
-          self.days[index].thisDaysShows[onShowIndex].airTime = airTime;
-         
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      self.$set(self.days[index].thisDaysShows[onShowIndex], 'airTime', '')
+      self.days[index].thisDaysShows[onShowIndex].airTime = airTime;
     },
     viewShow(event) {
       var self = this;
       var elem = event.target;
       var showName = elem.parentElement.previousElementSibling.textContent;
-      //console.log(elem.parentElement.previousElementSibling.textContent);
       self.$router.push({
         name: 'show', 
         query: {name: showName}, 
@@ -257,7 +197,6 @@ export default {
       var database = firebase.database();
 
       var refFavorites = database.ref('users/' + this.$store.state.userID + "/favorites/");
-      //refFavorites.child('users/' + self.userID + '/favorites').remove();
       
       for(var i = 0; i < this.$store.state.favorites.length; i++) {
         console.log(this.$store.state.userID)
@@ -268,8 +207,14 @@ export default {
         }
       }
       refFavorites.child(dbID).remove();
-      //self.checkIfFavorite();
-      //self.getFavorites();
+    },
+    clickedCalendarShow(event) {
+      var self = this;
+      var showName = event.target.parentElement.children[0].children[0].textContent;
+      self.$router.push({
+        name: 'show', 
+        query: {name: showName}, 
+      });
     },
   }
 }
@@ -290,11 +235,11 @@ export default {
 
 .title {
   font-size: 24px;
+  margin-top: 55px;
+  margin-bottom: 55px;
 }
 
 .favoriteContainer {
-  margin-top: 55px;
-  margin-bottom: 55px;
   display: flex;
   flex-direction: column; 
   width: 80%;
@@ -363,6 +308,14 @@ export default {
   align-items: center;
   width: calc(100% - 10px);
   padding: 5px;
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.show:hover {
+  opacity: 0.5;
+  color: rgb(235, 83, 37);
 }
 
 .showName {
@@ -371,6 +324,12 @@ export default {
 
 .episodeName {
   font-size: 10px;
+}
+
+.clickZone {
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 
 </style>
