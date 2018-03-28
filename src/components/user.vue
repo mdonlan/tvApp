@@ -101,7 +101,7 @@ export default {
       for(var i = 0; i < this.$store.state.favorites.length; i++) {
         axios({
         method:'get',
-        url: 'http://api.tvmaze.com/singlesearch/shows?q=' + this.$store.state.favorites[i].name + '&embed=episodes'
+        url: 'https://api.tvmaze.com/singlesearch/shows?q=' + this.$store.state.favorites[i].name + '&embed=episodes'
         })
         .then(function(response) {
           var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
