@@ -3,8 +3,12 @@
       
       <div class="title">Favorite Shows</div>
       <div class="favoriteContainer" v-if="this.$store.state.favorites">
-        <div v-for="show in favorites">
-          {{show.name}}
+        <div class="favoriteShow" v-for="show in favorites">
+          <div class="favoriteShowName">{{show.name}}</div>
+          <div class="favoriteShowRight">
+            <div class="viewBtn btn" v-on:click="viewShow($event)">View</div>
+            <div class="removeBtn btn">Remove</div>
+          </div>
         </div>
       </div>
 
@@ -13,8 +17,13 @@
           <div class="dayTitle">{{day.fullDate}}</div>
           <div class="dayShows" v-if="day.thisDaysShows">
             <div class="show" v-for="show in day.thisDaysShows">
-              <div>{{show.showName}}</div>
-              <div>{{show.airTime}}</div>
+              <div class="left">
+                <div class="showName">{{show.showName}}</div>
+                <div class="episodeName">{{show.name}}</div>
+              </div>
+              <div class="right">
+                <div>{{show.airTime}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -37,21 +46,26 @@ export default {
   created() {
     this.getDate();
     //this.findNextAirDate();
-    this.$store.watch(
-      (state)=>{
-        return this.$store.state.favorites // could also put a Getter here
-      },
-      (oldValue, newValue)=>{
-      //something changed do something
-      //console.log(oldValue)
-      //console.log(newValue)
+    if(this.$store.state.favorites.length > 0) {
+      console.log('testing');
       this.findNextAirDate();
-      },
-      //Optional Deep if you need it
-      {
-        deep:true
-      }
-    )
+    } else {
+      this.$store.watch(
+        (state)=>{
+          return this.$store.state.favorites // could also put a Getter here
+        },
+        (oldValue, newValue)=>{
+        //something changed do something
+        //console.log(oldValue)
+        //console.log(newValue)
+        this.findNextAirDate();
+        },
+        //Optional Deep if you need it
+        {
+          deep:true
+        }
+      )
+    }
   },
   filters: {
 
@@ -77,6 +91,7 @@ export default {
         var day = {
           fullDate: fullDate,
           date: tempDate,
+          dayNum: i,
         }
         self.days.push(day);
       }
@@ -90,7 +105,7 @@ export default {
         url:'http://api.themoviedb.org/3/tv/' + this.$store.state.favorites[i].showID + '?api_key=75234636e15f7c2463efbf69fd35b291',
         })
         .then(function(response) {
-          console.log(response)
+          //console.log(response)
           // on show details promise return
           // get season details
           var onSeason = response.data.number_of_seasons;
@@ -204,6 +219,16 @@ export default {
         console.log(error);
       });
     },
+    viewShow(event) {
+      var self = this;
+      var elem = event.target;
+      var showName = elem.parentElement.previousElementSibling.textContent
+      //console.log(elem.parentElement.previousElementSibling.textContent);
+      self.$router.push({
+        name: 'show', 
+        query: {name: showName}, 
+      });
+    },
   }
 }
 </script>
@@ -227,8 +252,42 @@ export default {
 
 .favoriteContainer {
   margin-top: 55px;
+  margin-bottom: 55px;
   display: flex;
   flex-direction: column; 
+  width: 80%;
+  align-items: center;
+}
+
+.favoriteShow {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  border: 1px solid #dddddd;
+  padding: 5px;
+}
+
+.favoriteShowRight {
+  display: flex;
+}
+
+.btn {
+  border: 1px solid #dddddd;
+  padding: 3px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.viewBtn {
+  background: rgba(23, 84, 197, 0.5);
+}
+
+.viewBtn:hover {
+  background: rgba(23, 84, 197, 1.0);
+}
+
+.removeBtn {
+  background: rgba(219, 81, 39, 0.5);
 }
 
 .calendarContainer {
@@ -252,6 +311,24 @@ export default {
 
 .dayShows {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.show {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 10px);
+  padding: 5px;
+}
+
+.showName {
+  font-size: 14px;
+}
+
+.episodeName {
+  font-size: 10px;
 }
 
 </style>
