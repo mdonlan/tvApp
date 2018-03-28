@@ -290,10 +290,15 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 
 .dayTitle {
   border-bottom: 1px solid #dddddd;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  margin-bottom: 5px;
 }
 
 .dayShows {
