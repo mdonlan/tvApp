@@ -7,7 +7,7 @@
           <div class="favoriteShowName">{{show.name}}</div>
           <div class="favoriteShowRight">
             <div class="viewBtn btn" v-on:click="viewShow($event)">View</div>
-            <div class="removeBtn btn">Remove</div>
+            <div class="removeBtn btn" v-on:click="removeFromFavorites($event)">Remove</div>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
 <script>
 import axios from 'axios';
 import $ from 'jquery';
-import firebase,{ app } from 'firebase';
+import firebase from 'firebase';
 
 export default {
   name: 'user',
@@ -47,7 +47,7 @@ export default {
     this.getDate();
     //this.findNextAirDate();
     if(this.$store.state.favorites.length > 0) {
-      console.log('testing');
+      //console.log('testing');
       this.findNextAirDate();
     } else {
       this.$store.watch(
@@ -158,15 +158,36 @@ export default {
           var day = airdate.getDay();
           var fullAirDate = days[day] + ' ' + months[month] + ' ' + date;
           if(value.fullDate == fullAirDate) {
-            //console.log(index)
             if(typeof self.days[index].thisDaysShows == 'undefined') {
               self.$set(self.days[index], 'thisDaysShows', [])
             }
+
+            var alreadyDisplayed = false;
+            if(self.days[index].thisDaysShows) {
+              if(self.days[index].thisDaysShows.length == 0) {
+                self.days[index].thisDaysShows.push(weeklyEpisodes[i]);
+              } else {
+                for(var j = 0; j < self.days[index].thisDaysShows.length; j++) {
+                  if(weeklyEpisodes[i].showName == self.days[index].thisDaysShows[j].showName) {
+                    console.log('hello')
+                    alreadyDisplayed = true;
+                  }
+                  if(j == self.days[index].thisDaysShows.length - 1) {
+                    if(alreadyDisplayed == false) {
+                      console.log(alreadyDisplayed)
+                      self.days[index].thisDaysShows.push(weeklyEpisodes[i]);
+                    }
+                  }
+                }
+              }
+            }
+
             
-            self.days[index].thisDaysShows.push(weeklyEpisodes[i]);
             var lastAdded = self.days[index].thisDaysShows.length - 1;
-            //self.days[index].push(weeklyEpisodes[i]);
-            self.getShowTimes(value, index, weeklyEpisodes[i], lastAdded);
+
+            
+
+            //self.getShowTimes(value, index, weeklyEpisodes[i], lastAdded);
           } else {
 
           }
@@ -222,12 +243,33 @@ export default {
     viewShow(event) {
       var self = this;
       var elem = event.target;
-      var showName = elem.parentElement.previousElementSibling.textContent
+      var showName = elem.parentElement.previousElementSibling.textContent;
       //console.log(elem.parentElement.previousElementSibling.textContent);
       self.$router.push({
         name: 'show', 
         query: {name: showName}, 
       });
+    },
+    removeFromFavorites(event) {
+      var self = this;
+      var elem = event.target;
+      var showName = elem.parentElement.previousElementSibling.textContent;
+      var database = firebase.database();
+
+      var refFavorites = database.ref('users/' + this.$store.state.userID + "/favorites/");
+      //refFavorites.child('users/' + self.userID + '/favorites').remove();
+      
+      for(var i = 0; i < this.$store.state.favorites.length; i++) {
+        console.log(this.$store.state.userID)
+        console.log(this.$store.state.favorites[i].showID)
+        if(showName == this.$store.state.favorites[i].name) {
+          var dbID = this.$store.state.favorites[i].dbID;
+          console.log('found match')
+        }
+      }
+      refFavorites.child(dbID).remove();
+      //self.checkIfFavorite();
+      //self.getFavorites();
     },
   }
 }

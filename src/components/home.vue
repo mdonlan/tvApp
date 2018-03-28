@@ -104,6 +104,7 @@ export default {
   align-items: center;
   background: #373837;
   color: #dddddd;
+  min-height: 100%;
 }
 
 .container {
@@ -111,6 +112,8 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   width: 75%;
+  height: 75%;
+  min-height: 75%;
 }
 
 .showContainer {

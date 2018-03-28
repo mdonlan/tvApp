@@ -63,7 +63,8 @@ export default {
             //console.log(favData)
             var favObj = {
               showID: value.showID,
-              name: value.showName
+              name: value.showName,
+              dbID: key,
             }
             favorites.push(favObj);
           });
