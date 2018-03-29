@@ -1,15 +1,23 @@
 <template>
   <div class="wrapper">
     <div class="seasonContainer" v-if="season">
-      <div class="seasonTitle">Season {{season.season_number}}</div>
-      <div class="seasonOverview">{{season.overview}}</div>
+      <div class="seasonDetails">
+        <div class="seasonImg">
+          <img class="episodeImg" v-bind:src="'https://image.tmdb.org/t/p/w185' + season.poster_path">
+        </div>
+        <div class="seasonText">
+          <div class="seasonTitle">Season {{season.season_number}}</div>
+          <div class="seasonOverview">{{season.overview}}</div>
+        </div>
+      </div>
+      
       <div class="episodeContainer">
         <div class="episode" v-for="episode in season.episodes">
           <div class="clickZone" v-on:click="clickedEpisode($event)"></div>
-          <div class="episodeImgSection">
-            <img class="episodeImg" v-bind:src="'https://image.tmdb.org/t/p/w185' + episode.still_path">
+          <div class="episodeImg">
+            <img v-bind:src="'https://image.tmdb.org/t/p/w185' + episode.still_path">
           </div>
-          <div class="episodeTextSection">
+          <div class="episodeText">
             <div class="episodeNumber">Episode {{episode.episode_number}}</div>
             <div>
               {{episode.name}} ({{episode.season_number}}x{{episode.episode_number | checkIfOverTen}})
@@ -119,23 +127,62 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: #dddddd;
 }
 
 .seasonContainer {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  align-items: center;
+  width: 75%;
 }
 
-.season {
+.seasonDetails {
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.seasonImg {
+  width: 33%;
+}
+
+.seasonTitle {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.seasonText {
+  width: 33%;
+}
+
+.episodeContainer {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
 }
 
 .episode {
   display: flex;
+  flex-direction: row;
   margin-top: 5px;
   margin-bottom: 5px;
   position: relative;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.episode:hover {
+  opacity: 0.5;
+}
+
+.episodeText {
+  width: 50%;
+}
+
+.episodeImg {
+  width: 25%;
 }
 
 .clickZone {

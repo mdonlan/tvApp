@@ -73,14 +73,26 @@
       <div class="addToFavoritesButton" v-if="showIsNotFavorite" v-on:click="addToFavorites">Add to favorites</div>
       <div class="removeFromFavoritesButton" v-if="showIsFavorite" v-on:click="removeFromFavorites">Remove from favorites</div>
       
+      <div class="seasonsTitle">Seasons</div>
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
         <div class="season"v-for="season in seasons">
           <div class="clickZone" v-on:click="goToSeason($event)"></div>
           <div class="seasonTitle list-item">Season {{season.season_number}}</div>
           <img class="seasonImg" v-bind:src="'https://image.tmdb.org/t/p/original' + season.poster_path">
-          
         </div>
     </div>
+
+    <div class="castTitle">Cast</div>
+    <div class="castContainer">
+      <div class="castMember" v-for="castMember in cast">
+        <div class="castText">
+          <div>{{castMember.name}} as</div>
+          <div>{{castMember.character}}</div>
+        </div>
+        <img class="castMemberImg" v-bind:src="'https://image.tmdb.org/t/p/w185' + castMember.profile_path">
+      </div>
+    </div>
+    
     </div>
   </div>
 </template>
@@ -106,6 +118,7 @@ export default {
       showIsNotFavorite: false,
       favoritesPromiseReturned: false,
       showPromiseReturned: false,
+      cast: null,
     }
   },
   created() {
@@ -215,11 +228,12 @@ export default {
       var self = this;
       axios({
         method:'get',
-        url:'https://api.themoviedb.org/3/tv/' + self.showID + '?api_key=75234636e15f7c2463efbf69fd35b291',
+        url:'https://api.themoviedb.org/3/tv/' + self.showID + '?api_key=75234636e15f7c2463efbf69fd35b291&append_to_response=credits',
       })
       .then(function(response) {
         self.show = response.data;
         self.showPromiseReturned = true;
+        self.cast = response.data.credits.cast;
         //self.checkIfFavorite();
         self.getFavorites();
         self.numSeasons = self.show.seasons.length;
@@ -453,7 +467,6 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
   width: 50%;
 }
 
@@ -550,6 +563,8 @@ export default {
 }
 
 .addToFavoritesButton, .removeFromFavoritesButton {
+  margin-top: 75px;
+  margin-bottom: 25px;
   border-radius: 3px;
   padding: 5px;
   cursor: pointer;
@@ -571,6 +586,32 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
+}
+
+.castContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 50%;
+}
+
+.castMember {
+  position: relative;
+}
+
+.castText {
+  position: absolute;
+  background: rgba(34, 34, 34, 0.9);
+  width: 100%;
+  bottom: 0px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.castTitle, .seasonsTitle {
+  margin-top: 50px;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
 </style>
