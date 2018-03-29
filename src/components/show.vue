@@ -437,6 +437,7 @@ export default {
   align-items: center;
   width: 100%;
   margin-top: 35px;
+  flex-shrink: 0;
 }
 
 .left, .right, .center {
@@ -468,6 +469,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 50%;
+  flex-shrink: 0;
 }
 
 .season {
