@@ -75,26 +75,11 @@
       
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
         <div class="season"v-for="season in seasons">
+          <div class="clickZone" v-on:click="goToSeason($event)"></div>
           <div class="seasonTitle list-item">Season {{season.season_number}}</div>
           <img class="seasonImg" v-bind:src="'https://image.tmdb.org/t/p/original' + season.poster_path">
-          <div class="eachSeasonsEpisodes hidden">
-            <div class="seasonTitle">Season {{season.season_number}}</div>
-            <div class="episode" v-for="episode in season.episodes">
-              <div class="episodeImgSection">
-                <img class="episodeImg" v-bind:src="'https://image.tmdb.org/t/p/w185' + episode.still_path">
-              </div>
-              <div class="episodeTextSection">
-                <div>
-                  {{episode.name}} ({{episode.season_number}}x{{episode.episode_number | checkIfOverTen}})
-                </div>
-                <div class="episodeOverview">
-                  {{episode.overview}}
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
-      <div class="overlayBackground"></div>
     </div>
     </div>
   </div>
@@ -298,11 +283,11 @@ export default {
     },
     toggleList(event) {
       // on click toggle visibilty of list children
-      //console.log(event.target)
       var targetClass = event.target.classList[0];
 
       if(targetClass == "seasonsTitle") {
-        var toggleElem = $(".seasonsContainer");
+        //var toggleElem = $(".seasonsContainer");
+        var overlayElem = $(".seasonsContainer");
       } else if(targetClass == "seasonImg") {
         // create overlay of season with eppisodes listed
         var overlayElem = event.target.nextElementSibling;
@@ -374,6 +359,15 @@ export default {
       refFavorites.child(favID).remove();
       //self.checkIfFavorite();
       self.getFavorites();
+    },
+    goToSeason(event) {
+      var self = this;
+      var seasonClicked = event.target.nextElementSibling.textContent;
+      seasonClicked = seasonClicked.split("Season ");
+      self.$router.push({
+        name: 'season', 
+        query: {show: self.show.name, season: seasonClicked[1], id: self.showID}, 
+      });
     },
   }
 }
@@ -465,6 +459,9 @@ export default {
 
 .season {
   margin-bottom: 10px;
+  margin: 5px;
+  cursor: pointer;
+  position: relative;
 }
 
 .seasonTitle {
@@ -489,7 +486,7 @@ export default {
 }
 
 .list-item {
-  cursor: pointer;
+  
 }
 
 .episodeOverview {
@@ -568,6 +565,12 @@ export default {
 
 .removeFromFavoritesButton {
   background: #c22828;
+}
+
+.clickZone {
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 </style>

@@ -46,7 +46,6 @@ export default {
       axios({
         method:'get',
         url:'https://api.themoviedb.org/3/discover/tv?api_key=75234636e15f7c2463efbf69fd35b291&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false',
-        //url:'https://api.themoviedb.org/3/tv/popular?api_key=75234636e15f7c2463efbf69fd35b291',
       })
       .then(function(response) {
         // only return the first 9 shows
@@ -82,7 +81,6 @@ export default {
           var selectedShowID = self.popularTV[i].id;
         }
       }
-      //clickedShowname = clickedShowname.replace(/\s+/g, '');
       self.$router.push({
         name: 'show', 
         query: {name: clickedShowname}, 

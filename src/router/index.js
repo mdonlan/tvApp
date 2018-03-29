@@ -6,6 +6,8 @@ import searchResults from '@/components/searchResults'
 import login from '@/components/login'
 import signup from '@/components/signup'
 import user from '@/components/user'
+import season from '@/components/season'
+import episode from '@/components/episode'
 
 import firebase from 'firebase';
 
@@ -45,6 +47,16 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/season',
+      name: 'season',
+      component: season
+    },
+    {
+      path: '/episode',
+      name: 'episode',
+      component: episode
     },
   ]
 })
