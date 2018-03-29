@@ -135,6 +135,8 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 75%;
+  flex-shrink: 0;
+  margin-top: 50px;
 }
 
 .seasonDetails {
