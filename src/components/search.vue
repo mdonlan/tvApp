@@ -83,6 +83,7 @@ $(document).on('keypress', '.searchInput', function(e){
     border-radius: 7px;
     overflow: hidden;
     position: relative;
+    outline: none;
 }
 
 /* 

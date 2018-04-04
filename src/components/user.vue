@@ -224,7 +224,7 @@ export default {
 <style scoped>
 
 .wrapper {
-  height: 100%;
+  height: 1250px;
   width: 100%;
   color: #dddddd;
   display: flex;
@@ -242,8 +242,10 @@ export default {
 .favoriteContainer {
   display: flex;
   flex-direction: column; 
-  width: 80%;
   align-items: center;
+  flex-shrink: 0;
+  overflow: auto;
+  height: 500px;
 }
 
 .favoriteShow {
@@ -252,6 +254,7 @@ export default {
   width: 300px;
   border: 1px solid #dddddd;
   padding: 5px;
+  flex-shrink: 0;
 }
 
 .favoriteShowRight {
@@ -274,13 +277,14 @@ export default {
 }
 
 .removeBtn {
-  background: rgba(219, 81, 39, 0.5);
+  background: rgba(219, 81, 39, 0.8);
 }
 
 .calendarContainer {
-  height: 500px;
+  height: 400px;
   width: 80%;
   display: flex;
+  flex-shrink: 0;
 }
 
 .day {
@@ -319,8 +323,8 @@ export default {
 }
 
 .show:hover {
-  opacity: 0.5;
-  color: rgb(235, 83, 37);
+  opacity: 0.9;
+  color: #eb4d25;
 }
 
 .showName {
