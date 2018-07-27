@@ -75,7 +75,6 @@ export default {
 <style scoped>
 
 .wrapper {
-  height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
@@ -99,6 +98,7 @@ export default {
   height: 278px;
   width: 185px;
   cursor: pointer;
+  margin: 10px;
 }
 
 .result:hover {

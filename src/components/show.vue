@@ -2,76 +2,149 @@
   <div class="wrapper">
     <img class="showImg" v-if="show" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
     <div class="showDetails" v-if="show">
+
       <div class="showDetailsTop">
-        <div class="left">
-          <img class="showPosterImg" v-if="show" v-bind:src="'https://image.tmdb.org/t/p/w185' + show.poster_path">
+        
+
+      </div>
+
+      <div class="showInfo">
+
+          <div class="left_show_info">
+            <div class="left">
+              <img class="showPosterImg" v-if="show" v-bind:src="'https://image.tmdb.org/t/p/w185' + show.poster_path">
+            </div>
+
+            <div class="right">
+              <div class="showName">{{show.name}}</div>
+              <div class="showOverview">{{show.overview}}</div>
+            </div>
+            </div>
+          
+          <div class="right_show_info">
+            
+
+          <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Series Premiere:</div>
+              <div class="showDetailsItemRight">{{show.first_air_date}}</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Episode Runtime:</div>
+              <div class="showDetailsItemRight">{{show.episode_run_time[0]}}min</div>
+            </div>
+            <div class="seriesDetails multiLine">
+              <div class="showDetailsItemLeft">Genre:</div>
+              <div class="showDetailsItemRight moveRight" v-for="genre in show.genres">
+                {{genre.name}} 
+              </div>
+            </div>
+            <div class="seriesDetails multiLine">
+              <div class="showDetailsItemLeft">Created By:</div>
+              <div class="showDetailsItemRight moveRight" v-for="creator in show.created_by">
+                <div>{{creator.name}}</div>
+              </div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Most Recent Air Date:</div>
+              <div class="showDetailsItemRight">{{show.last_air_date}}</div>
+            </div>
+            <div class="seriesDetails multiLine">
+              <div class="showDetailsItemLeft">Network:</div>
+              <div class="showDetailsItemRight moveRight" v-for="network in show.networks">
+                {{network.name}}
+              </div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Number of Episodes:</div>
+              <div class="showDetailsItemRight">{{show.number_of_episodes}}</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Number of Seasons:</div>
+              <div class="showDetailsItemRight">{{show.number_of_seasons}}</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Show Status:</div>
+              <div class="showDetailsItemRight">{{show.status}}</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Show Type:</div>
+              <div class="showDetailsItemRight">{{show.type}}</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Show Score:</div>
+              <div class="showDetailsItemRight">{{show.vote_average}}/10</div>
+            </div>
+            <div class="seriesDetails">
+              <div class="showDetailsItemLeft">Show # Votes:</div>
+              <div class="showDetailsItemRight">{{show.vote_count}}</div>
+            </div>
+          </div>
         </div>
 
-        <div class="center">
-          <div class="showName">{{show.name}}</div>
-          <div class="showOverview">{{show.overview}}</div>
-        </div>
+      <!--
+<div class="showInfo">
 
-        <div class="right">
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Series Premiere</div>
             <div class="showDetailsItemRight">{{show.first_air_date}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Episode Runtime</div>
             <div class="showDetailsItemRight">{{show.episode_run_time[0]}}min</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails multiLine">
             <div class="showDetailsItemLeft">Genre</div>
-            <div class="showDetailsItemRight" v-for="genre in show.genres">
+            <div class="showDetailsItemRight moveRight" v-for="genre in show.genres">
               {{genre.name}}
             </div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails multiLine">
             <div class="showDetailsItemLeft">Created By: </div>
-            <div class="showDetailsItemRight" v-for="creator in show.created_by">
+            <div class="showDetailsItemRight moveRight" v-for="creator in show.created_by">
               <div>{{creator.name}}</div>
             </div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Most Recent Air Data</div>
             <div class="showDetailsItemRight">{{show.last_air_date}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails multiLine">
             <div class="showDetailsItemLeft">Network</div>
-            <div class="showDetailsItemRight" v-for="network in show.networks">
+            <div class="showDetailsItemRight moveRight" v-for="network in show.networks">
               {{network.name}}
             </div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Number of Episodes</div>
             <div class="showDetailsItemRight">{{show.number_of_episodes}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Number of Seasons</div>
             <div class="showDetailsItemRight">{{show.number_of_seasons}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Show Status</div>
             <div class="showDetailsItemRight">{{show.status}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Show Type</div>
             <div class="showDetailsItemRight">{{show.type}}</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Show Score</div>
             <div class="showDetailsItemRight">{{show.vote_average}}/10</div>
           </div>
-          <div class="seriesDetailsRight">
+          <div class="seriesDetails">
             <div class="showDetailsItemLeft">Show # Votes</div>
             <div class="showDetailsItemRight">{{show.vote_count}}</div>
           </div>
+
         </div>
-      </div>
+        -->
 
       <div class="addToFavoritesButton" v-if="showIsNotFavorite" v-on:click="addToFavorites">Add to favorites</div>
       <div class="removeFromFavoritesButton" v-if="showIsFavorite" v-on:click="removeFromFavorites">Remove from favorites</div>
+
       
       <div class="seasonsTitle">Seasons</div>
       <div class="seasonsContainer" v-if="numSeasons" v-on:click="toggleList($event)"> 
@@ -391,23 +464,87 @@ export default {
 <style scoped>
 
 .wrapper {
-  height: 3000px;
-  width: 100%;
+  width: calc(100% - 100px);
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
+  flex-shrink: 0;
+
 }
 
 .showImg {
+
   width: 100%;
-  position: absolute;
+  position: fixed;
   z-index: 0;
   max-height: 100%;
+
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .showPosterImg {
   
+}
+
+.showDetails {
+  width: 100%;
+  background: rgba(34, 56, 102, 0.99);
+  margin-top: 750px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  color: #dddddd;
+  z-index: 1;
+  -webkit-box-shadow: 0px 35px 100px 80px rgba(17,17,17,0.8); 
+  box-shadow: 0px 35px 100px 80px rgba(17,17,17,0.8);
+}
+
+.showDetailsTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 35px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.left, .right, .center {
+  
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+
+  .left, .right {
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+*/
+
+.left {
+  justify-content: flex-end;
+  padding-right: 10px;
+  width: 33%;
+}
+
+.right {
+  padding-left: 10px;
+  align-items: flex-start;
+  flex-direction: column;  
+  width: 64%;
 }
 
 .showName {
@@ -417,49 +554,8 @@ export default {
 }
 
 .showOverview {
-  width: 50%;
-}
-
-.showDetails {
-  height: 1000px;
-  width: 100%;
-  background: #373837;
-  margin-top: 750px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #dddddd;
-  z-index: 1;
-}
-
-.showDetailsTop {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 35px;
-  flex-shrink: 0;
-}
-
-.left, .right, .center {
-  width: 33%;
-  height: 100%;
-  display: flex;
-}
-
-.left {
-  justify-content: flex-end;
-  padding-right: 5%;
-}
-
-.right {
-  display: flex;
-  flex-direction: column;
-}
-
-.center {
-  
-  flex-direction: column;
-  padding-left: 5%;
+  width: 80%;
+  text-align: left;
 }
 
 .seasonsContainer {
@@ -547,21 +643,57 @@ export default {
   z-index: 0;
 }
 
-.seriesDetailsRight {
+.showInfo {
+  margin-top: 50px;
   display: flex;
-  margin-bottom: 5px;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-around;
+}
+
+.left_show_info, .right_show_info {
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.left_show_info {
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 60%;
+}
+
+.right_show_info {
+  align-items: center;
+  width: 40%;
+}
+
+.seriesDetails {
+  display: flex;
+  width: 400px;
+  height: 30px;
 }
 
 .showDetailsItemLeft, .showDetailsItemRight {
-  width: 25%;
+  width: 50%;
 }
 
 .showDetailsItemLeft {
-  text-align: start;
+  font-size: 16px;
 }
 
-.showDetailsItemRight {
-  text-align: end;
+.showDetailsItemRight { 
+  font-size: 14px;
+}
+
+.multiLine {
+  
+}
+
+.moveRight {
+  width: auto;
 }
 
 .addToFavoritesButton, .removeFromFavoritesButton {
@@ -595,10 +727,12 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   width: 50%;
+  flex-shrink: 0;
 }
 
 .castMember {
   position: relative;
+  margin: 5px;
 }
 
 .castText {
@@ -614,6 +748,77 @@ export default {
   margin-top: 50px;
   font-size: 24px;
   margin-bottom: 10px;
+}
+
+/*
+  responsive
+*/
+
+@media screen and (max-width: 480px) {
+
+  .wrapper {
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .showImg {
+    display: none;
+  }
+
+  .showDetails {
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .showDetailsTop {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .showOverview {
+    text-align: center;
+  }
+
+  .showInfo {
+    height: auto;
+    flex-shrink: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .seriesDetails {
+    width: 100%;
+  }
+
+  .showDetailsItemLeft {
+    text-align: start;
+  }
+
+  .showDetailsItemRight {
+    text-align: end;
+  }
+
+  .seasonsContainer {
+    width: 90%;
+  }
+
+  .castContainer {
+    width: 90%;
+  }
+
+  .castMember {
+    width: 45%;
+  }
+
+  .castMemberImg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 </style>

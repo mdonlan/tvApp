@@ -35,6 +35,8 @@ export default {
             query: {query: self.searchInputValue}, 
             params: {id: ''}
         });
+        // forces search results page to refresh when entering new search when already on search results page
+        this.$router.go()
       }
     },
     checkKey(event) {
@@ -61,29 +63,29 @@ $(document).on('keypress', '.searchInput', function(e){
 <style scoped>
 
 .searchWrapper {
-    margin-top: 25px;
-    margin-bottom: 25px;
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
 .searchBarContainer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 30px;
-    width: 350px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 30px;
+  width: 350px;
 }
 
 .searchInput {
-    height: 100%;
-    width: 60%;
-    background: #dddddd;
-    color: #111111;
-    line-height: 30px;
-    padding-left: 5px;
-    border-radius: 7px;
-    overflow: hidden;
-    position: relative;
-    outline: none;
+  height: 100%;
+  width: 60%;
+  background: #222222;
+  color: #dddddd;
+  line-height: 30px;
+  padding-left: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  outline: none;
 }
 
 /* 
@@ -93,25 +95,36 @@ $(document).on('keypress', '.searchInput', function(e){
 [contenteditable=true]:empty:not(:focus):before{
   content: attr(placeholder);
   display: block; /* For Firefox */
-  opacity: 0.5;
+  opacity: 0.7;
   cursor:text;
+  color: #dddddd;
 }
 
 .searchSubmitButton {
-    background: #dddddd;
-    color: #111111;
-    transition: 0.2s all linear;
-    height: 100%;
-    line-height: 30px;
-    width: 30%;
-    border-radius: 7px;
-    text-align: center;
-    cursor: pointer;
+  border: 1px solid #dddddd;
+  color: #dddddd;
+  transition: 0.2s all linear;
+  height: 25px;
+  line-height: 25px;
+  width: 30%;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
 }
 
 .searchSubmitButton:hover {
-    background: #2fda93;
-    color: #dddddd;
+  background: #18c97f;
+  color: #222222;
+}
+
+@media screen and (max-width: 480px) {
+  .searchBarContainer {
+    width: 100%;
+  }
+
+  .searchWrapper {
+    width: 80%;
+  }
 }
 
 </style>

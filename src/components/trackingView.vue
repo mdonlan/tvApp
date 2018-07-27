@@ -78,7 +78,7 @@ export default {
   methods: {
     getDate() {
       var self = this;
-      for(var i = -3; i < 4; i++) {
+      for(var i = -4; i < 3; i++) {
         var tempDate = new Date();
         tempDate.setDate(tempDate.getDate() + i);
         var date = tempDate.getDate();
@@ -88,12 +88,13 @@ export default {
         var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
         var fullDate = days[day] + ' ' + months[month] + ' ' + date;
-        var day = {
+        var thisDay = {
           fullDate: fullDate,
           date: tempDate,
+          airDay: date,
           dayNum: i,
         }
-        self.days.push(day);
+        self.days.push(thisDay);
       }
     },
     findNextAirDate() {
@@ -101,9 +102,11 @@ export default {
       for(var i = 0; i < this.$store.state.favorites.length; i++) {
         axios({
         method:'get',
+        //url: 'https://api.tvmaze.com/singlesearch/shows?q=' + this.$store.state.favorites[i].name + '&embed=episodes'
         url: 'https://api.tvmaze.com/singlesearch/shows?q=' + this.$store.state.favorites[i].name + '&embed=episodes'
         })
         .then(function(response) {
+          
           var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
           var allEpisodes = response.data._embedded.episodes;
           var showName = response.data.name;
@@ -120,11 +123,15 @@ export default {
             }
           }
             self.displayEpisodes(weeklyEpisodes);
-          })
+
+            
+        })
         .catch(function (error) {
           console.log(error);
         });
+        
       }
+      
     },
     displayEpisodes(weeklyEpisodes) {
       var self = this;
@@ -132,12 +139,21 @@ export default {
       var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       $.each(self.days, function(index, value) {
         for(var i = 0; i < weeklyEpisodes.length; i++) {
+          //var airdate = new Date(weeklyEpisodes[i].airdate);
           var airdate = new Date(weeklyEpisodes[i].airdate);
           var date = airdate.getDate();
           var month = airdate.getMonth();
           var day = airdate.getDay();
-          var fullAirDate = days[day] + ' ' + months[month] + ' ' + date;
-          if(value.fullDate == fullAirDate) {
+          var fullAirDate = (days[day]) + ' ' + months[month] + ' ' + date;
+
+          if(weeklyEpisodes[i].showName === 'The Americans') {
+            var testDate = weeklyEpisodes[i].airdate;
+            //console.log(date)
+            //console.log(value.airDay)
+          }
+
+          if(value.airDay - 1 == date) {
+            
             
             if(typeof self.days[index].thisDaysShows == 'undefined') {
               self.$set(self.days[index], 'thisDaysShows', [])
@@ -231,6 +247,8 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: auto;
+  flex-shrink: 0;
 }
 
 .title {
@@ -242,19 +260,23 @@ export default {
 .favoriteContainer {
   display: flex;
   flex-direction: column; 
-  align-items: center;
-  flex-shrink: 0;
-  overflow: auto;
-  height: 500px;
+  align-items: flex-start;
+  width: 500px;
 }
 
 .favoriteShow {
   display: flex;
   justify-content: space-between;
-  width: 300px;
-  border: 1px solid #dddddd;
+  align-items: center;
+  width: 100%;
   padding: 5px;
-  flex-shrink: 0;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0 1px 0 0 #dddddd; /* Border bottom */
+}
+
+.favoriteShow:hover {
+  box-shadow: 0 2px 0 0 #dddddd; /* Border bottom */
 }
 
 .favoriteShowRight {
@@ -262,10 +284,18 @@ export default {
 }
 
 .btn {
-  border: 1px solid #dddddd;
-  padding: 3px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  width: 75px;
   margin: 5px;
   cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 10px 8px -8px black;
+}
+
+.btn:hover {
+  box-shadow: 0 14px 8px -8px black;
 }
 
 .viewBtn {
@@ -277,14 +307,18 @@ export default {
 }
 
 .removeBtn {
-  background: rgba(219, 81, 39, 0.8);
+  background: rgba(219, 81, 39, 0.5);
+}
+
+.removeBtn:hover {
+  background: rgba(219, 81, 39, 1);
 }
 
 .calendarContainer {
-  height: 400px;
-  width: 80%;
   display: flex;
   flex-shrink: 0;
+  width: 90%;
+  height: 400px;
 }
 
 .day {
@@ -296,6 +330,10 @@ export default {
   align-items: center;
   margin-right: 5px;
   margin-left: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.75);
 }
 
 .dayTitle {
@@ -339,6 +377,46 @@ export default {
   height: 100%;
   width: 100%;
   position: absolute;
+}
+
+@media screen and (max-width: 1000px) {
+
+  .calendarContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    height: auto;
+  }
+
+  .day {
+    width: 100%;
+    margin-bottom: 10px;
+    min-height: 100px;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+  .wrapper {
+    justify-content: flex-start;
+  }
+
+  .title {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+
+  .calendarContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+  }
+
+  .day {
+    width: 100%;
+    margin-bottom: 10px;
+    min-height: 100px;
+  }
 }
 
 </style>

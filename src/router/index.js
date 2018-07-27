@@ -5,9 +5,11 @@ import show from '@/components/show'
 import searchResults from '@/components/searchResults'
 import login from '@/components/login'
 import signup from '@/components/signup'
-import user from '@/components/user'
+import trackingView from '@/components/trackingView'
 import season from '@/components/season'
 import episode from '@/components/episode'
+import airingToday from '@/components/airingToday'
+import popular from '@/components/popular'
 
 import firebase from 'firebase';
 
@@ -41,9 +43,9 @@ const router = new Router({
       component: signup
     },
     {
-      path: '/user',
-      name: 'user',
-      component: user,
+      path: '/tracking',
+      name: 'trackingView',
+      component: trackingView,
       meta: {
         requiresAuth: true
       }
@@ -58,10 +60,21 @@ const router = new Router({
       name: 'episode',
       component: episode
     },
+    {
+      path: '/airingToday',
+      name: 'airingToday',
+      component: airingToday
+    },
+    {
+      path: '/popular',
+      name: 'popular',
+      component: popular
+    },
   ]
 })
 
 router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0);
   let currentUser = firebase.auth().currentUser;
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   if(requiresAuth && !currentUser) next ('login')

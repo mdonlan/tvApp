@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import search from './components/search'
 import topNav from './components/topNav'
+import footerComponent from './components/footerComponent'
 
 import firebase from 'firebase'
 
@@ -38,4 +39,5 @@ firebase.auth().onAuthStateChanged(function(user) {
 // register components globally
 Vue.component('search', search);
 Vue.component('topNav', topNav);
+Vue.component('footerComponent', footerComponent);
 

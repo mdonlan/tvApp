@@ -1,26 +1,28 @@
 <template>
   <div class="wrapper">
-    <div class="title">Popular</div> 
-    <div class="popularContainer container" v-if="popularTV">
-      <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event)">
-        <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
-        <div class="showText">
-          <div class="showName">{{show.name}}</div>
-        </div>
-        <div class="clickZone"></div>
-      </div>
-    </div>
-    <div class="morePopular">More</div>
+
     <div class="airingTodayTitle title">Airing Today</div>
     <div class="airingTodayContainer container" v-if="airingToday">
-      <div class="showContainer" v-for="show in airingToday" v-on:click="goToShowDetails($event)">
+      <div class="showContainer" v-for="show in airingToday" v-on:click="goToShowDetails($event, show)">
         <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
         <div class="showText">
           <div class="showName">{{show.name}}</div>
         </div>
-        <div class="clickZone"></div>
       </div>
     </div>
+    <router-link class="moreButton" :to="{ path: 'airingToday' }">View More</router-link>
+
+    <div class="title">Popular</div> 
+    <div class="popularContainer container" v-if="popularTV">
+      <div class="showContainer" v-for="show in popularTV" v-on:click="goToShowDetails($event, show)">
+        <img class="tvImg" v-bind:src="'https://image.tmdb.org/t/p/original' + show.backdrop_path">
+        <div class="showText">
+          <div class="showName">{{show.name}}</div>
+        </div>
+      </div>
+    </div>
+    <router-link class="moreButton" :to="{ path: 'popular' }">View More</router-link>
+
   </div>
 </template>
 
@@ -69,24 +71,16 @@ export default {
         console.log(error);
       });
     },
-    goToShowDetails(event) {
+    goToShowDetails(event, show) {
       var self = this;
       
-      // find show id
-      // currently doing this by getting the show name from the DOM element
-      // then using the name to loop through all the shows in data and find matching to get ID
-      var clickedShowname = event.target.previousElementSibling.children[0].innerHTML;
-      for(var i = 0; i < self.popularTV.length; i++) {
-        if(self.popularTV[i].name == clickedShowname) {
-          var selectedShowID = self.popularTV[i].id;
-        }
-      }
       self.$router.push({
         name: 'show', 
-        query: {name: clickedShowname}, 
-        params: {id: selectedShowID}
+        query: {name: show.name}, 
+        params: {id: show.id}
       });
     },
+
   }
 }
 </script>
@@ -96,11 +90,9 @@ export default {
 
 .wrapper {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #373837;
   color: #dddddd;
   min-height: 100%;
 }
@@ -116,9 +108,10 @@ export default {
 
 .showContainer {
   position: relative;
-  height: 33.3%;
   width: 30%;
   cursor: pointer;
+  padding: 0px;
+  margin: 0px;
 }
 
 .showContainer:hover {
@@ -126,11 +119,7 @@ export default {
 }
 
 .airingTodayContainer {
-}
 
-.title {
-  margin-top: 15px;
-  margin-bottom: 15px;
 }
 
 .tvImg {
@@ -142,44 +131,55 @@ export default {
 .showText {
   position: absolute;
   bottom: 0px;
-  padding-left: 10px;
-  width: calc(100% - 10px);
+  width: 100%;
   height: 25px;
   line-height: 25px;
-  background: rgba(43, 43, 43, 0.9);
+  background: #2580aae6;
 }
 
 .showName {
   color: #dddddd;
-}
-
-.clickZone {
-  position: absolute;
-  top: 0px;
-  height: 100%;
-  width: 100%;
+  text-align: center;
 }
 
 .title {
   font-size: 32px;
   font-weight: bold;
+  margin-top: 60px;
+  margin-bottom: 35px;
 }
 
-.morePopular {
-  width: 125px;
-  height: 30px;
-  background: rgba(43, 43, 43, 0.9);
+.moreButton {
+  margin-top: 10px;
+  height: 25px;
+  width: 100px;
+  line-height: 25px;
   text-align: center;
-  font-size: 24px;
-  line-height: 30px;
+  border: 1px solid #dddddd;
+  padding: 5px;
+  transition: 1s all;
   border-radius: 3px;
   cursor: pointer;
-  transition: 1s all;
 }
 
-.morePopular:hover {
-  opacity: 0.7;
-  width: 175px;
+.moreButton:hover {
+  background: #dddddd;
+  color: #222222;
+  width: 150px;
+}
+
+a {
+  color: #dddddd;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 480px) {
+  .showContainer {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+  }
 }
 
 </style>

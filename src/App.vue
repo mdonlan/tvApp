@@ -2,6 +2,7 @@
   <div id="app">
     <topNav></topNav>
     <router-view/>
+    <footerComponent></footerComponent>
   </div>
 </template>
 
@@ -21,6 +22,10 @@ export default {
   },
   created() {
     this.checkLoggedIn();
+  },
+  mounted() {
+    console.log('running mounted');
+    window.addEventListener("scroll", this.handleScroll);
   },
   filters: {
 
@@ -72,6 +77,15 @@ export default {
         self.$store.commit('setFavorites', favorites);
       });
     },
+    handleScroll(event) {
+      let topNav = document.querySelector(".topNavWrapper");
+
+      if(window.scrollY > 650) {
+        topNav.style.background = '#222222';
+      } else {
+        topNav.style.background = '';
+      }
+    }
   }
 }
 
@@ -79,17 +93,15 @@ export default {
 
 <style>
 html, body {
-  /* changed display to table to make body expand if child gets larger, which it does bc we're loading images */
-  display: block;
-  height: 100%;
-  width: 100%;
   margin: 0px;
-  padding-bottom: 1%;
-  background: #373837;
+  background-color: #1d1d1d;
 }
+
 #app {
-  height: 100%;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Work Sans', sans-serif;
+  margin-top: 60px;
 }
 </style>
