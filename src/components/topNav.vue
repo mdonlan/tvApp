@@ -84,7 +84,7 @@ export default {
 .topNavWrapper {
   height: 60px;
   width: 100%;
-  background: rgba(34, 56, 102, 0.99);
+  background: rgba(34, 56, 102, 0.877);
   display: flex;
   color: #dddddd;
   justify-content: center;

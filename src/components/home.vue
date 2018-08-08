@@ -89,12 +89,19 @@ export default {
 <style scoped>
 
 .wrapper {
-  width: 100%;
+  width: calc(100% - 100px);
   display: flex;
   flex-direction: column;
   align-items: center;
   color: #dddddd;
   min-height: 100%;
+  /*background: rgba(34, 56, 102, 0.90);*/
+  background: rgba(18, 24, 37, 0.801);
+  margin-top: 150px;
+}
+
+.imageContainer {
+
 }
 
 .container {
@@ -108,14 +115,16 @@ export default {
 
 .showContainer {
   position: relative;
-  width: 30%;
+  width: 405px;
+  height: 232px;
   cursor: pointer;
   padding: 0px;
-  margin: 0px;
+  margin: 3px;
+  transition: 0.7s;
 }
 
 .showContainer:hover {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .airingTodayContainer {
@@ -134,7 +143,7 @@ export default {
   width: 100%;
   height: 25px;
   line-height: 25px;
-  background: #2580aae6;
+  background: rgb(34, 56, 102);
 }
 
 .showName {
@@ -150,13 +159,14 @@ export default {
 }
 
 .moreButton {
-  margin-top: 10px;
+  margin-top: 25px;
+  margin-bottom: 25px;
   height: 25px;
   width: 100px;
   line-height: 25px;
   text-align: center;
   border: 1px solid #dddddd;
-  padding: 5px;
+  padding: 15px;
   transition: 1s all;
   border-radius: 3px;
   cursor: pointer;

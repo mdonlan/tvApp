@@ -1,5 +1,6 @@
 <template>
   <div class="footerContainer">
+    FOOTER CONTAINER
   </div>
 </template>
 
@@ -32,6 +33,10 @@ export default {
   height: 60px;
   background: #111111;
   margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #dddddd;
 }
 
 </style>

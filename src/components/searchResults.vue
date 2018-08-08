@@ -25,6 +25,12 @@ export default {
       totalPages: null,
     }
   },
+  watch: {
+    '$route.params.id': function (id) {
+      console.log(id)
+      this.doSearch();
+    }
+  },
   created() {
     this.doSearch();
   },

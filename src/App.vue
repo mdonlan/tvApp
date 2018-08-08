@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <topNav></topNav>
-    <router-view/>
+    <router-view :key="$route.fullPath"></router-view>
+    
     <footerComponent></footerComponent>
   </div>
 </template>
@@ -24,8 +25,8 @@ export default {
     this.checkLoggedIn();
   },
   mounted() {
-    console.log('running mounted');
     window.addEventListener("scroll", this.handleScroll);
+    this.handleScroll();
   },
   filters: {
 
@@ -78,13 +79,37 @@ export default {
       });
     },
     handleScroll(event) {
-      let topNav = document.querySelector(".topNavWrapper");
+      // handle the scroll events to change the topnav styling
 
-      if(window.scrollY > 650) {
-        topNav.style.background = '#222222';
+      let topNav = document.querySelector(".topNavWrapper");
+      let searchInput = document.querySelector(".searchInput");
+      let onPage = null;
+
+      let url = window.location.href;
+      if(url.includes("show")) {
+        if(window.scrollY > 650) {
+          topNav.style.background = '#222222';
+          searchInput.style.background = '#dddddd';
+          searchInput.style.color = '#222222';
+        } else {
+          topNav.style.background = '';
+          searchInput.style.background = '';
+          searchInput.style.color = '';
+        }
       } else {
-        topNav.style.background = '';
+        // default
+        if(window.scrollY > 100) {
+          topNav.style.background = '#222222';
+          searchInput.style.background = '#dddddd';
+          searchInput.style.color = '#222222';
+        } else {
+          topNav.style.background = '';
+          searchInput.style.background = '';
+          searchInput.style.color = '';
+        }
       }
+
+      
     }
   }
 }
@@ -94,7 +119,7 @@ export default {
 <style>
 html, body {
   margin: 0px;
-  background-color: #1d1d1d;
+  background-color: #222222;
 }
 
 #app {
@@ -103,5 +128,9 @@ html, body {
   align-items: center;
   font-family: 'Work Sans', sans-serif;
   margin-top: 60px;
+  background-image: url("./Assets/8.jpg");
+  background-size: cover;                   
+  background-repeat: no-repeat;
+  background-position: center center;  
 }
 </style>

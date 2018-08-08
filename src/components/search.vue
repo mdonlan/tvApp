@@ -30,13 +30,21 @@ export default {
       var searchInputValue = $(".searchInput")[0].textContent;
       if(searchInputValue != '') {
         self.searchInputValue = searchInputValue;
-        self.$router.push({
+        
+          self.$router.push({
             name: 'searchResults', 
             query: {query: self.searchInputValue}, 
             params: {id: ''}
-        });
+          });
+        
         // forces search results page to refresh when entering new search when already on search results page
-        this.$router.go()
+        /*
+        this.$router.go({
+            name: 'searchResults', 
+            query: {query: self.searchInputValue}, 
+            params: {id: ''}
+          })
+        */
       }
     },
     checkKey(event) {
@@ -86,6 +94,7 @@ $(document).on('keypress', '.searchInput', function(e){
   overflow: hidden;
   position: relative;
   outline: none;
+  transition: 1s;
 }
 
 /* 
@@ -97,7 +106,6 @@ $(document).on('keypress', '.searchInput', function(e){
   display: block; /* For Firefox */
   opacity: 0.7;
   cursor:text;
-  color: #dddddd;
 }
 
 .searchSubmitButton {
