@@ -129,8 +129,9 @@ html, body {
   font-family: 'Work Sans', sans-serif;
   margin-top: 60px;
   background-image: url("./Assets/8.jpg");
-  background-size: cover;                   
+  background-attachment: fixed;
+  background-size: cover;
   background-repeat: no-repeat;
-  background-position: center center;  
+  background-position: center center;
 }
 </style>

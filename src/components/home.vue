@@ -8,6 +8,7 @@
         <div class="showText">
           <div class="showName">{{show.name}}</div>
         </div>
+        <div class="clickZone"></div>
       </div>
     </div>
     <router-link class="moreButton" :to="{ path: 'airingToday' }">View More</router-link>
@@ -89,15 +90,15 @@ export default {
 <style scoped>
 
 .wrapper {
-  width: calc(100% - 100px);
+  width: calc(100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   color: #dddddd;
   min-height: 100%;
   /*background: rgba(34, 56, 102, 0.90);*/
-  background: rgba(18, 24, 37, 0.801);
-  margin-top: 150px;
+  background: rgba(0, 0, 0, 0.75);
+  padding-top: 150px;
 }
 
 .imageContainer {
@@ -119,12 +120,22 @@ export default {
   height: 232px;
   cursor: pointer;
   padding: 0px;
-  margin: 3px;
-  transition: 0.7s;
+  margin: 3px; 
 }
 
-.showContainer:hover {
-  opacity: 0.4;
+.clickZone {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  transition: 0.7s;
+  background: #111111;
+  opacity: 0;
+}
+
+.clickZone:hover {
+  opacity: 0.8;
 }
 
 .airingTodayContainer {

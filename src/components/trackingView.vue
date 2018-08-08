@@ -249,6 +249,7 @@ export default {
   flex-direction: column;
   height: auto;
   flex-shrink: 0;
+  background: rgba(0,0,0,0.75);
 }
 
 .title {
